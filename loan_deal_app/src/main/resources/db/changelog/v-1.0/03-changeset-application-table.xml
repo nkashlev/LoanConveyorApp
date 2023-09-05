@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+    <changeSet author="nkashlev" id="create_application_table">
+        <createTable tableName="application">
+            <column name="application_id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="true"/>
+            </column>
+            <column name="client_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="credit_id" type="BIGINT">
+                <constraints nullable="true"/>
+            </column>
+            <column name="status" type="VARCHAR(255)">
+                <constraints nullable="true"/>
+            </column>
+            <column name="creation_date" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+            <column name="applied_offer" type="JSONB"/>
+            <column name="sign_date" type="TIMESTAMP"/>
+            <column name="ses_code" type="VARCHAR(255)"/>
+            <column name="status_history" type="JSONB"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseColumnNames="client_id" baseTableName="application"
+                                 constraintName="application_client_fk" referencedColumnNames="client_id"
+                                 referencedTableName="client"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseColumnNames="credit_id" baseTableName="application"
+                                 constraintName="application_credit_fk" referencedColumnNames="credit_id"
+                                 referencedTableName="credit"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+</databaseChangeLog>

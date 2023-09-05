@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "spring.cloud.openfeign.client.config.feignName.url",
+      "type": "java.lang.String",
+      "description": "Description for spring.cloud.openfeign.client.config.feignName.url."
+    }
+  ]
+}

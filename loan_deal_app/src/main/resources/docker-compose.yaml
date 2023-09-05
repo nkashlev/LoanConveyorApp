@@ -1,0 +1,17 @@
+version: '3.5'
+
+services:
+  db_deal:
+    container_name: deal
+    ports:
+      - '5433:5432'
+    environment:
+      - POSTGRES_HOST=localhost
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db_deal
+    image: postgres:alpine
+    restart: always
+
+
+
