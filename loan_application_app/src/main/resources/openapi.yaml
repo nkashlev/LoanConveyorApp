@@ -1,0 +1,159 @@
+openapi: 3.0.3
+info:
+  title: application
+  version: 0.0.1-SNAPSHOT
+tags:
+  - name: Application
+    description: Application
+paths:
+  /application:
+    post:
+      tags:
+        - LoanOffer
+      operationId: preScoringLoanOffers
+      description: Создать заявку
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoanApplicationRequestDTO"
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanOfferDTO"
+  /application/offer:
+    put:
+      tags:
+        - ApplyOffer
+      operationId: LoanOfferApply
+      description: Выбор одного из предложений
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoanOfferDTO"
+      responses:
+        200:
+          description: success
+
+components:
+  schemas:
+    LoanApplicationRequestDTO:
+      title: Loan Application Request
+      type: object
+      description: Модель заявки
+      required:
+        - amount
+        - term
+        - firstName
+        - lastName
+        - email
+        - birthDate
+        - passportSeries
+        - passportNumber
+      properties:
+        amount:
+          type: number
+          example: 1000000
+          minimum: 10000
+          description: Запрашиваемая сумма
+        term:
+          type: integer
+          format: int64
+          example: 12
+          minimum: 6
+          description: Срок кредита в месяцах
+        firstName:
+          type: string
+          example: Ivan
+          pattern: '[A-Za-z]{2,30}'
+          description: Имя
+        lastName:
+          type: string
+          example: Ivanov
+          pattern: '[A-Za-z]{2,30}'
+          description: Фамилия
+        middleName:
+          type: string
+          example: Ivanovich
+          pattern: '[A-Za-z]{2,30}'
+          description: Отчество
+        email:
+          type: string
+          example: test@mail.ru
+          pattern: '[\w.]{2,50}@[\w.]{2,20}'
+          description: Электронная почта
+        birthdate:
+          type: string
+          format: date
+          example: 2000-12-31
+          description: Дата рождения
+        passportSeries:
+          type: string
+          example: 1234
+          pattern: '\d{4}'
+          description: Серия паспорта
+        passportNumber:
+          type: string
+          example: 123456
+          pattern: '\d{6}'
+          description: Номер паспорта
+
+    LoanOfferDTO:
+      title: Loan offer
+      type: object
+      description: Модель данных, представляющая информацию о предложении кредита.
+      required:
+        - applicationId
+        - requestedAmount
+        - totalAmount
+        - term
+        - monthlyPayment
+        - rate
+        - isInsuranceEnabled
+        - isSalaryClient
+      properties:
+        applicationId:
+          type: integer
+          format: int64
+          example: 1
+          description: Идентификатор заявки на кредит.
+        requestedAmount:
+          type: number
+          example: 1000000
+          minimum: 10000
+          description: Запрашиваемая сумма
+        totalAmount:
+          type: number
+          example: 1000000
+          minimum: 10000
+          description: Общая сумма кредита
+        term:
+          type: integer
+          format: int64
+          example: 12
+          minimum: 6
+          description: Срок кредита в месяцах
+        monthlyPayment:
+          type: number
+          example: 2000
+          description: Ежемесячный платеж по кредиту
+        rate:
+          type: number
+          example: 10
+          description: Процентная ставка по кредиту
+        isInsuranceEnabled:
+          type: boolean
+          example: true
+          description: Флаг, указывающий, включена ли страховка
+        isSalaryClient:
+          type: boolean
+          example: true
+          description: Флаг, указывающий, включена ли страховка

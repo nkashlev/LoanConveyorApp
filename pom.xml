@@ -6,6 +6,7 @@
     <modules>
         <module>loan_conveyor_app</module>
         <module>loan_deal_app</module>
+        <module>loan_application_app</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
