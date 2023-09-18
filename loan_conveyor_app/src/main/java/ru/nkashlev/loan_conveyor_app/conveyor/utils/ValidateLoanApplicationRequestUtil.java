@@ -32,9 +32,10 @@ public class ValidateLoanApplicationRequestUtil {
         if (request.getMiddleName() != null && !request.getMiddleName().matches("[A-Za-z]{2,30}")) {
             invalidFields.add("middleName");
         }
-        if (!request.getEmail().matches("[\\w.]{2,50}@[\\w.]{2,20}")) {
-            invalidFields.add("email");
-        }
+//        if (!request.getEmail().matches("[\\w.]{2,50}@[\\w.]{2,20}")) {
+//            invalidFields.add("email");
+//        }
+        // TODO: 12.09.2023  
         if (!request.getBirthdate().isBefore(LocalDate.now().minusYears(18))) {
             invalidFields.add("birthdate");
         }

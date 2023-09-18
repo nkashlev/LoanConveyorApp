@@ -65,6 +65,26 @@ paths:
       responses:
         '200':
           description: Успешное завершение регистрации и подсчёт кредита
+
+  /deal/document/{applicationId}/send:
+    post:
+      tags:
+        - LoanCalculation
+      operationId: calculateLoanOffers
+      description: Запрос на отправку документов
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScoringDataDTO"
+      responses:
+        200:
+          description: success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreditDTO"
 components:
   schemas:
     LoanApplicationRequestDTO:
@@ -470,5 +490,3 @@ components:
         remainingDebt:
           type: number
           description: Оставшаяся задолженность по кредиту после платежа
-
-

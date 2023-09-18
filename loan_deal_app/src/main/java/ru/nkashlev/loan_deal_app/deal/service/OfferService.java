@@ -3,6 +3,7 @@ package ru.nkashlev.loan_deal_app.deal.service;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_deal_app.deal.entity.Application;
 import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
@@ -19,13 +20,23 @@ import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.S
 public class OfferService {
     private final ApplicationRepository applicationRepository;
 
+    private final KafkaProducer kafkaProducer;
+
+    @Value("${spring.kafka.producer.topic1}")
+    private String topic;
+
     private final Logger LOGGER = LoggerFactory.getLogger(OfferService.class);
 
     public void updateApplication(LoanOfferDTO request) throws ResourceNotFoundException {
         Application application = new FindIdByApplication(applicationRepository).findIdByApplication(request.getApplicationId());
         application.setAppliedOffer(request);
         new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, PREAPPROVAL, AUTOMATIC);
+
+        //kafkaProducer.sendMessage(topic, new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), PREAPPROVAL));
         LOGGER.info("Application updated with ID: {}", request.getApplicationId());
+       // kafkaProducer.sendMessage(topic,"1","hello");
+        kafkaProducer.sendMessage(topic, "hello");
+
     }
 }
 
