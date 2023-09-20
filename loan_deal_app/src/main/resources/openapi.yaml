@@ -68,23 +68,18 @@ paths:
 
   /deal/document/{applicationId}/send:
     post:
-      tags:
-        - LoanCalculation
-      operationId: calculateLoanOffers
-      description: Запрос на отправку документов
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/ScoringDataDTO"
+      description: Create documents
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
-        200:
-          description: success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/CreditDTO"
+        '200':
+          description: Document sent successfully
+
 components:
   schemas:
     LoanApplicationRequestDTO:

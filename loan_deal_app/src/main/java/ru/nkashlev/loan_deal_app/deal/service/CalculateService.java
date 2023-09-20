@@ -3,6 +3,7 @@ package ru.nkashlev.loan_deal_app.deal.service;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_deal_app.deal.entity.Application;
 import ru.nkashlev.loan_deal_app.deal.entity.Credit;
@@ -17,7 +18,7 @@ import ru.nkashlev.loan_deal_app.deal.utils.FindIdByApplication;
 import ru.nkashlev.loan_deal_app.deal.utils.UpdateApplicationStatusHistory;
 
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
-import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.APPROVED;
+import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.CC_APPROVED;
 import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.GenderEnum.*;
 import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.MaritalStatusEnum.*;
 
@@ -32,6 +33,8 @@ public class CalculateService {
 
     private final CreditRepository creditRepository;
 
+    private final EmailService emailService;
+
     private final Logger LOGGER = LoggerFactory.getLogger(CalculateService.class);
 
 
@@ -39,8 +42,9 @@ public class CalculateService {
         Application application = new FindIdByApplication(applicationRepository).findIdByApplication(id);
         ScoringDataDTO scoringDataDTO = setScoringDTO(new ScoringDataDTO(), application, request);
         Credit credit = saveCredit(application, scoringDataDTO);
-        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, APPROVED, AUTOMATIC, credit);
+        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
         LOGGER.info("Registration finished for application with ID {}: {}", id, request);
+        sendEmailMessage(application);
     }
 
     private Credit saveCredit(Application application, ScoringDataDTO scoringDataDTO) {
@@ -97,5 +101,17 @@ public class CalculateService {
             case DIVORCED -> scoringDataDTO.setMaritalStatus(DIVORCED);
             case WIDOWED -> scoringDataDTO.setMaritalStatus(WIDOWED);
         }
+    }
+
+    private void sendEmailMessage(Application application) {
+        String text = "Hello your loan application № " + application.getApplicationId() + " passed all checks!\n"
+                + "Now should send creating documents request by following link: ";
+        String email = application.getClient().getEmail();
+        try {
+            emailService.sendEmail(email, "Create documents for your loan application", text);
+        } catch (MessagingException e) {
+            LOGGER.error("Error while sending email: {}", e.getMessage());
+        }
+        LOGGER.info("Email message sent to {} ", email);
     }
 }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_deal_app.deal.entity.Application;
+import ru.nkashlev.loan_deal_app.deal.entity.util.EmailMessage;
 import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.LoanOfferDTO;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
@@ -13,7 +14,7 @@ import ru.nkashlev.loan_deal_app.deal.utils.FindIdByApplication;
 import ru.nkashlev.loan_deal_app.deal.utils.UpdateApplicationStatusHistory;
 
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
-import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.PREAPPROVAL;
+import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.APPROVED;
 
 @Service
 @RequiredArgsConstructor
@@ -30,13 +31,11 @@ public class OfferService {
     public void updateApplication(LoanOfferDTO request) throws ResourceNotFoundException {
         Application application = new FindIdByApplication(applicationRepository).findIdByApplication(request.getApplicationId());
         application.setAppliedOffer(request);
-        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, PREAPPROVAL, AUTOMATIC);
-
-        //kafkaProducer.sendMessage(topic, new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), PREAPPROVAL));
+        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, APPROVED, AUTOMATIC);
         LOGGER.info("Application updated with ID: {}", request.getApplicationId());
-       // kafkaProducer.sendMessage(topic,"1","hello");
-        kafkaProducer.sendMessage(topic, "hello");
 
+        EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), APPROVED);
+        kafkaProducer.sendMessage(topic, message);
     }
 }
 
