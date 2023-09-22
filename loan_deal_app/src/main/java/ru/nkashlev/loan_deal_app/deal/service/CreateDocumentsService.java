@@ -36,7 +36,7 @@ public class CreateDocumentsService {
 
             EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), PREPARE_DOCUMENTS);
             kafkaProducer.sendMessage(topic, message);
-            LOGGER.info("Message application for document creation sent with ID: {}", applicationId);
+            LOGGER.info("Message sent to kafka with topic - conveyor-create-documents");
         } else {
             LOGGER.info("Application does not exist or the status is incorrect");
         }

@@ -22,6 +22,6 @@ public class KafkaProducer {
 
     public void sendMessage(String topic, EmailMessage message) {
         kafkaTemplate.send(topic, message);
-        LOGGER.info("Message sent");
+        LOGGER.info("Message sent to kafka with topic - conveyor-finish-registration");
     }
 }

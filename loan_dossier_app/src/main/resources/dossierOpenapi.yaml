@@ -1,89 +1,12 @@
 openapi: 3.0.3
 info:
-  title: deal
+  title: dossier
   version: 0.0.1-SNAPSHOT
 tags:
-  - name: Deal
-    description: Deal
-paths:
-  /deal/application:
-    post:
-      tags:
-        - Application
-      operationId: LoanApplication
-      description: Расчёт возможных условий кредита
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoanApplicationRequestDTO"
-      responses:
-        200:
-          description: success
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/LoanOfferDTO"
+  - name: dossier
+    description: dossier
 
-  /deal/offer:
-    put:
-      tags:
-        - Offer
-      operationId: LoanOffer
-      description: Выбор одного из предложений
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/LoanOfferDTO"
-      responses:
-        200:
-          description: success
-
-  /deal/calculate/{application_id}:
-    put:
-      summary: Завершение регистрации и подсчёт кредита
-      description: Метод для завершения регистрации и получения полной информации о кредите
-      parameters:
-        - name: application_id
-          in: path
-          description: Идентификатор заявки на кредит
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        description: Данные для завершения регистрации
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/FinishRegistrationRequestDTO'
-      responses:
-        '200':
-          description: Успешное завершение регистрации и подсчёт кредита
-
-  /deal/document/{applicationId}/send:
-    post:
-      tags:
-        - CreateDocForSend
-      description: Create documents
-      operationId: CreateDocuments
-      parameters:
-        - name: applicationId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Document sent successfully
-
+paths: {}
 
 components:
   schemas:
@@ -258,7 +181,7 @@ components:
           description: Семейное положение заемщика
         dependentAmount:
           type: integer
-          format: int32
+          format: int64
           example: 2
           description: Количество иждивенцев у заемщика
         passportIssueDate:

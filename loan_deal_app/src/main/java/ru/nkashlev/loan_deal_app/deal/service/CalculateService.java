@@ -6,13 +6,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_deal_app.deal.entity.Application;
+import ru.nkashlev.loan_deal_app.deal.entity.Client;
 import ru.nkashlev.loan_deal_app.deal.entity.Credit;
 import ru.nkashlev.loan_deal_app.deal.entity.util.CreditStatus;
+import ru.nkashlev.loan_deal_app.deal.entity.util.Passport;
 import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.CreditDTO;
 import ru.nkashlev.loan_deal_app.deal.model.FinishRegistrationRequestDTO;
 import ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
+import ru.nkashlev.loan_deal_app.deal.repositories.ClientRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.CreditRepository;
 import ru.nkashlev.loan_deal_app.deal.utils.FindIdByApplication;
 import ru.nkashlev.loan_deal_app.deal.utils.UpdateApplicationStatusHistory;
@@ -33,6 +36,8 @@ public class CalculateService {
 
     private final CreditRepository creditRepository;
 
+    private final ClientRepository clientRepository;
+
     private final EmailService emailService;
 
     private final Logger LOGGER = LoggerFactory.getLogger(CalculateService.class);
@@ -42,6 +47,7 @@ public class CalculateService {
         Application application = new FindIdByApplication(applicationRepository).findIdByApplication(id);
         ScoringDataDTO scoringDataDTO = setScoringDTO(new ScoringDataDTO(), application, request);
         Credit credit = saveCredit(application, scoringDataDTO);
+        updateClient(application, scoringDataDTO);
         new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
         LOGGER.info("Registration finished for application with ID {}: {}", id, request);
         sendEmailMessage(application);
@@ -86,6 +92,24 @@ public class CalculateService {
         return scoringDataDTO;
     }
 
+    private void updateClient(Application application, ScoringDataDTO scoringDataDTO) {
+        Client client = application.getClient();
+        client.setAccount(scoringDataDTO.getAccount());
+        client.setGender(scoringDataDTO.getGender());
+        client.setMarital_status(scoringDataDTO.getMaritalStatus());
+        client.setDependent_amount(scoringDataDTO.getDependentAmount());
+        Passport passport = new Passport();
+        passport.setNumber(scoringDataDTO.getPassportNumber());
+        passport.setSeries(scoringDataDTO.getPassportSeries());
+        passport.setIssue_branch(scoringDataDTO.getPassportIssueBranch());
+        passport.setIssue_date(scoringDataDTO.getPassportIssueDate());
+        client.setPassport(passport);
+        client.setEmployment(scoringDataDTO.getEmployment());
+        clientRepository.save(client);
+        LOGGER.info("Client updated");
+    }
+
+
     private void setGender(FinishRegistrationRequestDTO request, ScoringDataDTO scoringDataDTO) {
         switch (request.getGender()) {
             case MALE -> scoringDataDTO.setGender(MALE);
@@ -105,13 +129,14 @@ public class CalculateService {
 
     private void sendEmailMessage(Application application) {
         String text = "Hello your loan application № " + application.getApplicationId() + " passed all checks!\n"
-                + "Now should send creating documents request by following link: ";
+                + "Now should send creating documents request by following link: http://localhost:8080/swagger-ui/index.html#/CreateDocForSend/createDocuments";
         String email = application.getClient().getEmail();
+        String subject = "Create documents for your loan application";
         try {
-            emailService.sendEmail(email, "Create documents for your loan application", text);
+            emailService.sendEmail(email, subject, text);
         } catch (MessagingException e) {
-            LOGGER.error("Error while sending email: {}", e.getMessage());
+            LOGGER.error("Error while sending email: {} subject: {}", e.getMessage(), subject);
         }
-        LOGGER.info("Email message sent to {} ", email);
+        LOGGER.info("Email message sent to {} subject: {}", email, subject);
     }
 }

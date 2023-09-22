@@ -12,6 +12,7 @@ import ru.nkashlev.loan_deal_app.deal.model.LoanOfferDTO;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.ClientRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -50,6 +51,7 @@ public class LoanService {
         for (LoanOfferDTO loanOffer : offers) {
             Application application = new Application();
             application.setClient(client);
+            application.setCreationDate(LocalDate.now());
             applicationRepository.save(application);
             loanOffer.setApplicationId(application.getApplicationId());
             LOGGER.info("New application saved with ID: {}", application.getApplicationId());
