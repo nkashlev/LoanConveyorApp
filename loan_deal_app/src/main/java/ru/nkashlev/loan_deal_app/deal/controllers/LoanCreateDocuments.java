@@ -5,18 +5,18 @@ import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import ru.nkashlev.loan_deal_app.deal.api.CreateDocForSendApi;
-import ru.nkashlev.loan_deal_app.deal.service.CreateDocumentsService;
+import ru.nkashlev.loan_deal_app.deal.api.CreateDocumentsApi;
+import ru.nkashlev.loan_deal_app.deal.service.CreateDocumentsProducerService;
 
 @RestController
 @RequiredArgsConstructor
-public class LoanCreateDocuments implements CreateDocForSendApi {
+public class LoanCreateDocuments implements CreateDocumentsApi {
 
-    private final CreateDocumentsService createDocumentsService;
+    private final CreateDocumentsProducerService createDocumentsProducerService;
     @SneakyThrows
     @Override
     public ResponseEntity<Void> createDocuments(@PathVariable("applicationId") Long applicationId) {
-        createDocumentsService.sendMessageToKafka(applicationId);
+        createDocumentsProducerService.sendMessageToKafka(applicationId);
         return ResponseEntity.ok().build();
     }
 }

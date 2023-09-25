@@ -3,12 +3,13 @@ package ru.nkashlev.loan_deal_app.deal.service;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.messaging.MessagingException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_deal_app.deal.entity.Application;
 import ru.nkashlev.loan_deal_app.deal.entity.Client;
 import ru.nkashlev.loan_deal_app.deal.entity.Credit;
 import ru.nkashlev.loan_deal_app.deal.entity.util.CreditStatus;
+import ru.nkashlev.loan_deal_app.deal.entity.util.EmailMessage;
 import ru.nkashlev.loan_deal_app.deal.entity.util.Passport;
 import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.CreditDTO;
@@ -21,6 +22,7 @@ import ru.nkashlev.loan_deal_app.deal.utils.FindIdByApplication;
 import ru.nkashlev.loan_deal_app.deal.utils.UpdateApplicationStatusHistory;
 
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
+import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.APPROVED;
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.CC_APPROVED;
 import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.GenderEnum.*;
 import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.MaritalStatusEnum.*;
@@ -38,7 +40,11 @@ public class CalculateService {
 
     private final ClientRepository clientRepository;
 
-    private final EmailService emailService;
+    private final KafkaProducer kafkaProducer;
+
+    @Value("${spring.kafka.producer.topic2}")
+    private String topic;
+
 
     private final Logger LOGGER = LoggerFactory.getLogger(CalculateService.class);
 
@@ -50,7 +56,9 @@ public class CalculateService {
         updateClient(application, scoringDataDTO);
         new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
         LOGGER.info("Registration finished for application with ID {}: {}", id, request);
-        sendEmailMessage(application);
+        EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), APPROVED);
+        kafkaProducer.sendMessage(topic, message);
+        LOGGER.info("Message sent to kafka with topic - conveyor-create-documents");
     }
 
     private Credit saveCredit(Application application, ScoringDataDTO scoringDataDTO) {
@@ -125,18 +133,5 @@ public class CalculateService {
             case DIVORCED -> scoringDataDTO.setMaritalStatus(DIVORCED);
             case WIDOWED -> scoringDataDTO.setMaritalStatus(WIDOWED);
         }
-    }
-
-    private void sendEmailMessage(Application application) {
-        String text = "Hello your loan application № " + application.getApplicationId() + " passed all checks!\n"
-                + "Now should send creating documents request by following link: http://localhost:8080/swagger-ui/index.html#/CreateDocForSend/createDocuments";
-        String email = application.getClient().getEmail();
-        String subject = "Create documents for your loan application";
-        try {
-            emailService.sendEmail(email, subject, text);
-        } catch (MessagingException e) {
-            LOGGER.error("Error while sending email: {} subject: {}", e.getMessage(), subject);
-        }
-        LOGGER.info("Email message sent to {} subject: {}", email, subject);
     }
 }

@@ -36,6 +36,7 @@ public class OfferService {
 
         EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), APPROVED);
         kafkaProducer.sendMessage(topic, message);
+        LOGGER.info("Message sent to kafka with topic - conveyor-finish-registration");
     }
 }
 

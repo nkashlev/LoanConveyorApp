@@ -32,11 +32,11 @@ public class EmailConsumeCreateDocumentsService {
 
     private final ApplicationRepository applicationRepository;
 
-    @KafkaListener(topics = "${spring.kafka.consumer.topic2}")
+    @KafkaListener(topics = "${spring.kafka.consumer.topic3}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
         String json = record.value();
         EmailMessage emailMessage = jsonMapper.readValue(json, EmailMessage.class);
-        LOGGER.info("Consumer JSON mapper from topic - conveyor-create-documents {} ", emailMessage);
+        LOGGER.info("Consumer JSON mapper from topic - conveyor-send-documents {} ", emailMessage);
         Application application = new FindIdByApplication(applicationRepository).findIdByApplication(emailMessage.getApplicationId());
         ScoringDataDTO scoringDataDTO = setScoringDataDTO(application);
         writeToTextFileCreditApplication("credit-application.txt", scoringDataDTO, application);
@@ -158,7 +158,7 @@ public class EmailConsumeCreateDocumentsService {
         helper.addAttachment("credit-payment-schedule.txt", file3);
 
         String text = String.format("Hello, here it your loan documents for application Nº %d!\n" +
-                        "Now you should send singing documents request by the following this link: http://localhost:8080/swagger-ui/index.html#/Default/dealCalculateApplicationIdPut",
+                        "Now you should send singing documents request by the following this link: http://localhost:8080/swagger-ui/index.html#/SingDocuments/singDocuments",
                 emailMessage.getApplicationId());
         helper.setText(text);
 
