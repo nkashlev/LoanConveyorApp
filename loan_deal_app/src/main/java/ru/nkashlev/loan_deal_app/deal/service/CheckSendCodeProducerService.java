@@ -23,17 +23,19 @@ public class CheckSendCodeProducerService extends AbstractProducerService {
     private final Logger LOGGER = LoggerFactory.getLogger(CheckSendCodeProducerService.class);
     private final StatusEnum BEFORE_STATUS = DOCUMENT_CREATED;
     private final static StatusEnum AFTER_STATUS = DOCUMENT_SIGNED;
+    private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
 
     @Autowired
     public CheckSendCodeProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
-                                        @Value("${spring.kafka.producer.topic5}") String topic) {
+                                        @Value("${spring.kafka.producer.topic5}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
         super(applicationRepository, creditRepository, kafkaProducer);
         this.topic = topic;
+        this.updateApplicationStatusHistory = updateApplicationStatusHistory;
     }
 
     @Override
     protected void updateApplication(Application application, Long applicationId) {
-        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, AFTER_STATUS, AUTOMATIC);
+        updateApplicationStatusHistory.updateApplicationStatusHistory(application, AFTER_STATUS, AUTOMATIC);
         LOGGER.info("Application for check code updated with ID: {}", applicationId);
         LOGGER.info("Status application is {}", AFTER_STATUS);
         Credit credit = application.getCredit();

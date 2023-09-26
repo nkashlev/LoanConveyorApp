@@ -28,10 +28,12 @@ public class OfferService {
 
     private final Logger LOGGER = LoggerFactory.getLogger(OfferService.class);
 
+    private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
+
     public void updateApplication(LoanOfferDTO request) throws ResourceNotFoundException {
         Application application = new FindIdByApplication(applicationRepository).findIdByApplication(request.getApplicationId());
         application.setAppliedOffer(request);
-        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, APPROVED, AUTOMATIC);
+        updateApplicationStatusHistory.updateApplicationStatusHistory(application, APPROVED, AUTOMATIC);
         LOGGER.info("Application updated with ID: {}", request.getApplicationId());
 
         EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), APPROVED);

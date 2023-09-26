@@ -24,17 +24,19 @@ public class SingDocumentsProducerService extends AbstractProducerService {
     private final Logger LOGGER = LoggerFactory.getLogger(SingDocumentsProducerService.class);
     private final static StatusEnum BEFORE_STATUS = PREPARE_DOCUMENTS;
     private final static StatusEnum AFTER_STATUS = DOCUMENT_CREATED;
+    private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
 
     @Autowired
     public SingDocumentsProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
-                                        @Value("${spring.kafka.producer.topic4}") String topic) {
+                                        @Value("${spring.kafka.producer.topic4}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
         super(applicationRepository, creditRepository, kafkaProducer);
         this.topic = topic;
+        this.updateApplicationStatusHistory = updateApplicationStatusHistory;
     }
 
     @Override
     protected void updateApplication(Application application, Long applicationId) {
-        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, AFTER_STATUS, AUTOMATIC);
+        updateApplicationStatusHistory.updateApplicationStatusHistory(application, AFTER_STATUS, AUTOMATIC);
         application.setSesCode(generateCode());
         applicationRepository.save(application);
         LOGGER.info("Application for send code updated with ID: {}", applicationId);

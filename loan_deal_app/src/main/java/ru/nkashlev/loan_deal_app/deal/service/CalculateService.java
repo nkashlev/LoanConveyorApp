@@ -42,19 +42,19 @@ public class CalculateService {
 
     private final KafkaProducer kafkaProducer;
 
+    private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
+
     @Value("${spring.kafka.producer.topic2}")
     private String topic;
 
-
     private final Logger LOGGER = LoggerFactory.getLogger(CalculateService.class);
-
 
     public void finishRegistration(Long id, FinishRegistrationRequestDTO request) throws ResourceNotFoundException {
         Application application = new FindIdByApplication(applicationRepository).findIdByApplication(id);
         ScoringDataDTO scoringDataDTO = setScoringDTO(new ScoringDataDTO(), application, request);
         Credit credit = saveCredit(application, scoringDataDTO);
         updateClient(application, scoringDataDTO);
-        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
+        updateApplicationStatusHistory.updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
         LOGGER.info("Registration finished for application with ID {}: {}", id, request);
         EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), APPROVED);
         kafkaProducer.sendMessage(topic, message);
