@@ -25,6 +25,7 @@ public class SingDocumentsProducerService extends AbstractProducerService {
     private final static StatusEnum BEFORE_STATUS = PREPARE_DOCUMENTS;
     private final static StatusEnum AFTER_STATUS = DOCUMENT_CREATED;
     private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
+    private final Random random = new Random();
 
     @Autowired
     public SingDocumentsProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
@@ -44,7 +45,6 @@ public class SingDocumentsProducerService extends AbstractProducerService {
     }
 
     private Long generateCode() {
-        Random random = new Random();
         Long code = random.nextLong(9000L) + 1000L;
         LOGGER.info("Generated code: {}", code);
         return code;
