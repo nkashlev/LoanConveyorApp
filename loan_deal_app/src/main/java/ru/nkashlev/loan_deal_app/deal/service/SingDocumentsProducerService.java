@@ -29,7 +29,7 @@ public class SingDocumentsProducerService extends AbstractProducerService {
 
     @Autowired
     public SingDocumentsProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
-                                        @Value("${spring.kafka.producer.topic4}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
+                                        @Value("${spring.kafka.producer.send-ses}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
         super(applicationRepository, creditRepository, kafkaProducer);
         this.topic = topic;
         this.updateApplicationStatusHistory = updateApplicationStatusHistory;

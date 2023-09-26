@@ -44,7 +44,7 @@ public class CalculateService {
 
     private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
 
-    @Value("${spring.kafka.producer.topic2}")
+    @Value("${spring.kafka.producer.create-documents}")
     private String topic;
 
     private final Logger LOGGER = LoggerFactory.getLogger(CalculateService.class);

@@ -26,7 +26,7 @@ public class EmailConsumerCreditIssued {
 
     private final ApplicationRepository applicationRepository;
 
-    @KafkaListener(topics = "${spring.kafka.consumer.topic5}")
+    @KafkaListener(topics = "${spring.kafka.consumer.credit-issued}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
         String json = record.value();
         EmailMessage emailMessage = jsonMapper.readValue(json, EmailMessage.class);

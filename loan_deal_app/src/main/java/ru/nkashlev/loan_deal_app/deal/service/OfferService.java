@@ -23,7 +23,7 @@ public class OfferService {
 
     private final KafkaProducer kafkaProducer;
 
-    @Value("${spring.kafka.producer.topic1}")
+    @Value("${spring.kafka.producer.finish-registration}")
     private String topic;
 
     private final Logger LOGGER = LoggerFactory.getLogger(OfferService.class);

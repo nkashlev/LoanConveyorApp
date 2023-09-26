@@ -1,0 +1,33 @@
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        password: postgres
+        url: jdbc:postgresql://localhost:5433/db_deal
+        username: postgres
+    jpa:
+        open-in-view: false
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+                show_sql: true
+    kafka:
+        bootstrap-servers: localhost:9092
+        producer:
+            create-documents: conveyor-create-documents
+            credit-issued: conveyor-credit-issued
+            finish-registration: conveyor-finish-registration
+            send-documents: conveyor-send-documents
+            send-ses: conveyor-send-ses
+    liquibase:
+        change-log: classpath:db/changelog/db.changelog-master.xml
+    mail:
+        host: smtp.gmail.com
+        password: mfedzqhftgzrfzlm
+        port: 587
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true
+        username: loanconveyor2@gmail.com

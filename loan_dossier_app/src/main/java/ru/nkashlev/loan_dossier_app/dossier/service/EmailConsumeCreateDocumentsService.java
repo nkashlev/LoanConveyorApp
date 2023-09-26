@@ -32,7 +32,7 @@ public class EmailConsumeCreateDocumentsService {
 
     private final ApplicationRepository applicationRepository;
 
-    @KafkaListener(topics = "${spring.kafka.consumer.topic3}")
+    @KafkaListener(topics = "${spring.kafka.consumer.send-documents}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
         String json = record.value();
         EmailMessage emailMessage = jsonMapper.readValue(json, EmailMessage.class);

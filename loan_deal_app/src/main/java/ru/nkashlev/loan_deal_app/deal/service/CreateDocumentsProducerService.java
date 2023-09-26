@@ -23,7 +23,7 @@ public class CreateDocumentsProducerService extends AbstractProducerService {
     private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
 
     public CreateDocumentsProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
-                                          @Value("${spring.kafka.producer.topic3}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
+                                          @Value("${spring.kafka.producer.send-documents}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
         super(applicationRepository, creditRepository, kafkaProducer);
         this.topic = topic;
         this.updateApplicationStatusHistory = updateApplicationStatusHistory;

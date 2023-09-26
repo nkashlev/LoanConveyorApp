@@ -26,7 +26,7 @@ public class EmailConsumerSendCodeService {
 
     private final ApplicationRepository applicationRepository;
 
-    @KafkaListener(topics = "${spring.kafka.consumer.topic4}")
+    @KafkaListener(topics = "${spring.kafka.consumer.send-ses}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
         String json = record.value();
         EmailMessage emailMessage = jsonMapper.readValue(json, EmailMessage.class);

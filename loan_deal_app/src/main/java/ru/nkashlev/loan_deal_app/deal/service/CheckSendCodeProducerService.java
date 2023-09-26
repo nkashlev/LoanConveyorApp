@@ -27,7 +27,7 @@ public class CheckSendCodeProducerService extends AbstractProducerService {
 
     @Autowired
     public CheckSendCodeProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
-                                        @Value("${spring.kafka.producer.topic5}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
+                                        @Value("${spring.kafka.producer.credit-issued}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
         super(applicationRepository, creditRepository, kafkaProducer);
         this.topic = topic;
         this.updateApplicationStatusHistory = updateApplicationStatusHistory;
