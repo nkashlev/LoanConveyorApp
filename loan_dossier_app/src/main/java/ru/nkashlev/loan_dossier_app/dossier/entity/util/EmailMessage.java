@@ -16,5 +16,4 @@ public class EmailMessage implements Serializable {
     private ApplicationStatusHistoryDTO.StatusEnum theme;
 
     private Long applicationId;
-
 }

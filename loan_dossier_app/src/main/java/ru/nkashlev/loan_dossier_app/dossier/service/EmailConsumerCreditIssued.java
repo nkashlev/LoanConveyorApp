@@ -10,8 +10,7 @@ import org.springframework.messaging.MessagingException;
 import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_dossier_app.dossier.entity.Application;
 import ru.nkashlev.loan_dossier_app.dossier.entity.util.EmailMessage;
-import ru.nkashlev.loan_dossier_app.dossier.repositories.ApplicationRepository;
-import ru.nkashlev.loan_dossier_app.dossier.utils.FindIdByApplication;
+import ru.nkashlev.loan_dossier_app.dossier.utils.ApplicationUtil;
 
 import static ru.nkashlev.loan_dossier_app.dossier.model.ApplicationStatusHistoryDTO.StatusEnum.CREDIT_ISSUED;
 
@@ -24,14 +23,14 @@ public class EmailConsumerCreditIssued {
 
     private final EmailService emailService;
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationUtil applicationUtil;
 
     @KafkaListener(topics = "${spring.kafka.consumer.credit-issued}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
         String json = record.value();
         EmailMessage emailMessage = jsonMapper.readValue(json, EmailMessage.class);
         LOGGER.info("Consumer JSON mapper from topic - conveyor-credit-issued {} ", emailMessage);
-        Application application = new FindIdByApplication(applicationRepository).findIdByApplication(emailMessage.getApplicationId());
+        Application application = applicationUtil.findApplicationById(emailMessage.getApplicationId());
         application.setStatus(CREDIT_ISSUED);
         LOGGER.info("Status application is {}", CREDIT_ISSUED);
         sendToEmail(emailMessage);

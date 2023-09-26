@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_dossier_app.dossier.entity.Application;
 import ru.nkashlev.loan_dossier_app.dossier.entity.util.EmailMessage;
 import ru.nkashlev.loan_dossier_app.dossier.exceptions.ResourceNotFoundException;
-import ru.nkashlev.loan_dossier_app.dossier.repositories.ApplicationRepository;
-import ru.nkashlev.loan_dossier_app.dossier.utils.FindIdByApplication;
+import ru.nkashlev.loan_dossier_app.dossier.utils.ApplicationUtil;
 
 @RequiredArgsConstructor
 @Service
@@ -24,7 +23,7 @@ public class EmailConsumerSendCodeService {
 
     private final EmailService emailService;
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationUtil applicationUtil;
 
     @KafkaListener(topics = "${spring.kafka.consumer.send-ses}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
@@ -35,7 +34,7 @@ public class EmailConsumerSendCodeService {
     }
 
     private void sendToEmail(EmailMessage emailMessage) throws ResourceNotFoundException {
-        Application application = new FindIdByApplication(applicationRepository).findIdByApplication(emailMessage.getApplicationId());
+        Application application = applicationUtil.findApplicationById(emailMessage.getApplicationId());
         Long code = application.getSesCode();
         String email = emailMessage.getAddress();
         Long applicationId = emailMessage.getApplicationId();

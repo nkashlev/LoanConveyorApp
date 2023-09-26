@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_dossier_app.dossier.entity.Application;
 import ru.nkashlev.loan_dossier_app.dossier.entity.util.EmailMessage;
 import ru.nkashlev.loan_dossier_app.dossier.model.ScoringDataDTO;
-import ru.nkashlev.loan_dossier_app.dossier.repositories.ApplicationRepository;
-import ru.nkashlev.loan_dossier_app.dossier.utils.FindIdByApplication;
+import ru.nkashlev.loan_dossier_app.dossier.utils.ApplicationUtil;
 
 import javax.mail.internet.MimeMessage;
 import java.io.File;
@@ -30,14 +29,14 @@ public class EmailConsumeCreateDocumentsService {
 
     private final EmailService emailService;
 
-    private final ApplicationRepository applicationRepository;
+    private final ApplicationUtil applicationUtil;
 
     @KafkaListener(topics = "${spring.kafka.consumer.send-documents}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
         String json = record.value();
         EmailMessage emailMessage = jsonMapper.readValue(json, EmailMessage.class);
         LOGGER.info("Consumer JSON mapper from topic - conveyor-send-documents {} ", emailMessage);
-        Application application = new FindIdByApplication(applicationRepository).findIdByApplication(emailMessage.getApplicationId());
+        Application application = applicationUtil.findApplicationById(emailMessage.getApplicationId());
         ScoringDataDTO scoringDataDTO = setScoringDataDTO(application);
         writeToTextFileCreditApplication("credit-application.txt", scoringDataDTO, application);
         writeToTextFileCreditContact("credit-contact.txt", scoringDataDTO, application);

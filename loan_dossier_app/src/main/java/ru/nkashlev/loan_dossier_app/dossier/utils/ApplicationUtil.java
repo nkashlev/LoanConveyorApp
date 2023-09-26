@@ -11,11 +11,11 @@ import ru.nkashlev.loan_dossier_app.dossier.repositories.ApplicationRepository;
 
 @Component
 @RequiredArgsConstructor
-public class FindIdByApplication {
+public class ApplicationUtil {
     private final ApplicationRepository applicationRepository;
-    Logger LOGGER = LoggerFactory.getLogger(FindIdByApplication.class);
+    Logger LOGGER = LoggerFactory.getLogger(ApplicationUtil.class);
 
-    public Application findIdByApplication(Long id) throws ResourceNotFoundException {
+    public Application findApplicationById(Long id) throws ResourceNotFoundException {
         LOGGER.info("Started to find application with id: {}", id);
         Application application = applicationRepository.findById(id).orElse(null);
         if (application == null) {
