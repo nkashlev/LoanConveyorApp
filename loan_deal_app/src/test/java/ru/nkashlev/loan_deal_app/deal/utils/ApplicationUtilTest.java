@@ -20,13 +20,13 @@ import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.S
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.PREAPPROVAL;
 
 @ExtendWith(MockitoExtension.class)
-class UpdateApplicationStatusHistoryTest {
+class ApplicationUtilTest {
 
     @Mock
     private ApplicationRepository applicationRepository;
 
     @InjectMocks
-    private UpdateApplicationStatusHistory updateApplicationStatusHistory;
+    private ApplicationUtil applicationUtil;
 
     @Test
     void testUpdateApplicationStatusHistory() {
@@ -44,7 +44,7 @@ class UpdateApplicationStatusHistoryTest {
 
         when(applicationRepository.save(application)).thenReturn(application);
 
-        updateApplicationStatusHistory.updateApplicationStatusHistory(application, StatusEnum.APPROVED, ChangeTypeEnum.AUTOMATIC);
+        applicationUtil.updateApplicationStatusHistory(application, StatusEnum.APPROVED, ChangeTypeEnum.AUTOMATIC);
 
         verify(applicationRepository).save(application);
     }

@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import ru.nkashlev.loan_deal_app.deal.entity.Application;
 import ru.nkashlev.loan_deal_app.deal.entity.Credit;
+import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
 
@@ -16,10 +17,10 @@ import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.S
 
 @RequiredArgsConstructor
 @Component
-public class UpdateApplicationStatusHistory {
+public class ApplicationUtil {
 
     private final ApplicationRepository applicationRepository;
-    Logger LOGGER = LoggerFactory.getLogger(UpdateApplicationStatusHistory.class);
+    Logger LOGGER = LoggerFactory.getLogger(ApplicationUtil.class);
 
     public void updateApplicationStatusHistory(Application application, StatusEnum status, ChangeTypeEnum changeType) {
         LOGGER.info("Started to update application with id: {}", application.getApplicationId());
@@ -42,5 +43,15 @@ public class UpdateApplicationStatusHistory {
         application.getStatusHistory().add(statusHistory);
         application.setCredit(credit);
         applicationRepository.save(application);
+    }
+
+    public Application findApplicationById(Long id) throws ResourceNotFoundException {
+        LOGGER.info("Started to find application with id: {}", id);
+        Application application = applicationRepository.findById(id).orElse(null);
+        if (application == null) {
+            throw new ResourceNotFoundException("Cannot find application with id: " + id);
+        }
+        LOGGER.info("Found application with id: {}", id);
+        return application;
     }
 }

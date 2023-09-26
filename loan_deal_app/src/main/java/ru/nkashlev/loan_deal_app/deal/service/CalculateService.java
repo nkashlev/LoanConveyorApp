@@ -15,11 +15,9 @@ import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.CreditDTO;
 import ru.nkashlev.loan_deal_app.deal.model.FinishRegistrationRequestDTO;
 import ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO;
-import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.ClientRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.CreditRepository;
-import ru.nkashlev.loan_deal_app.deal.utils.FindIdByApplication;
-import ru.nkashlev.loan_deal_app.deal.utils.UpdateApplicationStatusHistory;
+import ru.nkashlev.loan_deal_app.deal.utils.ApplicationUtil;
 
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.APPROVED;
@@ -32,8 +30,6 @@ import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.MaritalStatusE
 @RequiredArgsConstructor
 public class CalculateService {
 
-    private final ApplicationRepository applicationRepository;
-
     private final ConveyorCalculationClient conveyorCalculationClient;
 
     private final CreditRepository creditRepository;
@@ -42,7 +38,7 @@ public class CalculateService {
 
     private final KafkaProducer kafkaProducer;
 
-    private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
+    private final ApplicationUtil applicationUtil;
 
     @Value("${spring.kafka.producer.create-documents}")
     private String topic;
@@ -50,11 +46,11 @@ public class CalculateService {
     private final Logger LOGGER = LoggerFactory.getLogger(CalculateService.class);
 
     public void finishRegistration(Long id, FinishRegistrationRequestDTO request) throws ResourceNotFoundException {
-        Application application = new FindIdByApplication(applicationRepository).findIdByApplication(id);
+        Application application = applicationUtil.findApplicationById(id);
         ScoringDataDTO scoringDataDTO = setScoringDTO(new ScoringDataDTO(), application, request);
         Credit credit = saveCredit(application, scoringDataDTO);
         updateClient(application, scoringDataDTO);
-        updateApplicationStatusHistory.updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
+        applicationUtil.updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
         LOGGER.info("Registration finished for application with ID {}: {}", id, request);
         EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), APPROVED);
         kafkaProducer.sendMessage(topic, message);

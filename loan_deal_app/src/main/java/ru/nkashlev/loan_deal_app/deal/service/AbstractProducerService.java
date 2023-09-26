@@ -11,7 +11,7 @@ import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.SendSesCodeRequest;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.CreditRepository;
-import ru.nkashlev.loan_deal_app.deal.utils.FindIdByApplication;
+import ru.nkashlev.loan_deal_app.deal.utils.ApplicationUtil;
 
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum;
 
@@ -27,6 +27,8 @@ public abstract class AbstractProducerService {
     private final KafkaProducer kafkaProducer;
 
     private final Logger LOGGER = LoggerFactory.getLogger(AbstractProducerService.class);
+
+    protected final ApplicationUtil applicationUtil;
 
     public void sendMessageToKafka(Long applicationId) throws ResourceNotFoundException {
         Application application = checkAndUpdateApplication(applicationId);
@@ -47,7 +49,7 @@ public abstract class AbstractProducerService {
     }
 
     protected Application checkAndUpdateApplication(Long applicationId) throws ResourceNotFoundException {
-        Application application = new FindIdByApplication(applicationRepository).findIdByApplication(applicationId);
+        Application application = applicationUtil.findApplicationById(applicationId);
         StatusEnum BEFORE_STATUS = getBeforeStatus();
         if (application.getStatus().equals(BEFORE_STATUS)) {
             updateApplication(application, applicationId);
@@ -60,7 +62,7 @@ public abstract class AbstractProducerService {
     }
 
     protected Application checkAndUpdateApplication(Long applicationId, SendSesCodeRequest request) throws ResourceNotFoundException {
-        Application application = new FindIdByApplication(applicationRepository).findIdByApplication(applicationId);
+        Application application = applicationUtil.findApplicationById(applicationId);
         StatusEnum BEFORE_STATUS = getBeforeStatus();
         if (application.getStatus().equals(BEFORE_STATUS) && application.getSesCode().equals(request.getCode())) {
             updateApplication(application, applicationId);

@@ -9,7 +9,7 @@ import ru.nkashlev.loan_deal_app.deal.entity.Application;
 import ru.nkashlev.loan_deal_app.deal.entity.Credit;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.CreditRepository;
-import ru.nkashlev.loan_deal_app.deal.utils.UpdateApplicationStatusHistory;
+import ru.nkashlev.loan_deal_app.deal.utils.ApplicationUtil;
 
 import static ru.nkashlev.loan_deal_app.deal.entity.util.CreditStatus.ISSUED;
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.*;
@@ -23,19 +23,16 @@ public class CheckSendCodeProducerService extends AbstractProducerService {
     private final Logger LOGGER = LoggerFactory.getLogger(CheckSendCodeProducerService.class);
     private final StatusEnum BEFORE_STATUS = DOCUMENT_CREATED;
     private final static StatusEnum AFTER_STATUS = DOCUMENT_SIGNED;
-    private final UpdateApplicationStatusHistory updateApplicationStatusHistory;
-
     @Autowired
     public CheckSendCodeProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
-                                        @Value("${spring.kafka.producer.credit-issued}") String topic, UpdateApplicationStatusHistory updateApplicationStatusHistory) {
-        super(applicationRepository, creditRepository, kafkaProducer);
+                                        @Value("${spring.kafka.producer.credit-issued}") String topic, ApplicationUtil applicationUtil) {
+        super(applicationRepository, creditRepository, kafkaProducer, applicationUtil);
         this.topic = topic;
-        this.updateApplicationStatusHistory = updateApplicationStatusHistory;
     }
 
     @Override
     protected void updateApplication(Application application, Long applicationId) {
-        updateApplicationStatusHistory.updateApplicationStatusHistory(application, AFTER_STATUS, AUTOMATIC);
+        applicationUtil.updateApplicationStatusHistory(application, AFTER_STATUS, AUTOMATIC);
         LOGGER.info("Application for check code updated with ID: {}", applicationId);
         LOGGER.info("Status application is {}", AFTER_STATUS);
         Credit credit = application.getCredit();
