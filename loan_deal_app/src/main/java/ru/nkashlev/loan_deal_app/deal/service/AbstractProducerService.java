@@ -54,6 +54,7 @@ public abstract class AbstractProducerService {
             LOGGER.info("Application for document creation updated with ID: {}", applicationId);
         } else {
             LOGGER.info("Application does not exist or the status is incorrect");
+            throw new ResourceNotFoundException("Application does not exist or the status is incorrect");
         }
         return application;
     }
@@ -65,6 +66,7 @@ public abstract class AbstractProducerService {
             updateApplication(application, applicationId);
         } else {
             LOGGER.info("Application does not exist or the status is incorrect");
+            throw new ResourceNotFoundException("Application does not exist or the status is incorrect");
         }
         return application;
     }
@@ -76,5 +78,4 @@ public abstract class AbstractProducerService {
     protected abstract StatusEnum getBeforeStatus();
 
     protected abstract StatusEnum getAfterStatus();
-
 }
