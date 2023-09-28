@@ -65,10 +65,10 @@ public abstract class AbstractProducerService {
         Application application = applicationUtil.findApplicationById(applicationId);
         StatusEnum BEFORE_STATUS = getBeforeStatus();
         if (application.getStatus().equals(BEFORE_STATUS) && application.getSesCode().equals(request.getCode())) {
-            updateApplication(application, applicationId);
+           updateApplication(application, applicationId);
         } else {
-            LOGGER.info("Application does not exist or the status is incorrect");
-            throw new ResourceNotFoundException("Application does not exist or the status is incorrect");
+            LOGGER.info("The application does not exist, or its status is incorrect, or the code does not match");
+            throw new ResourceNotFoundException("The application does not exist, or its status is incorrect, or the code does not match");
         }
         return application;
     }

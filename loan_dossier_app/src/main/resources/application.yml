@@ -36,6 +36,6 @@ spring:
 
     config:
         additional-location:
-                    credit-application: file:/D:\\programming\\LoanConveyorApp\\credit-application.txt
-                    credit-contact: file:/D:\\programming\\LoanConveyorApp\\credit-contact.txt
-                    credit-payment-schedule: file:/D:\programming\LoanConveyorApp\credit-payment-schedule.txt
+                    credit-application: D:\\programming\\LoanConveyorApp\\credit-application.txt
+                    credit-contact: D:\\programming\\LoanConveyorApp\\credit-contact.txt
+                    credit-payment-schedule: D:\programming\LoanConveyorApp\credit-payment-schedule.txt
