@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -30,6 +31,13 @@ public class EmailConsumeCreateDocumentsService {
     private final EmailService emailService;
 
     private final ApplicationUtil applicationUtil;
+
+    @Value("${spring.config.additional-location.credit-application}")
+    public String filePathToCreditApplication;
+    @Value("${spring.config.additional-location.credit-contact}")
+    public String filePathToCreditContact;
+    @Value("${spring.config.additional-location.credit-payment-schedule}")
+    public String filePathToCreditPaymentSchedule;
 
     @KafkaListener(topics = "${spring.kafka.consumer.send-documents}")
     public void listen(ConsumerRecord<String, String> record) throws Exception {
@@ -62,7 +70,7 @@ public class EmailConsumeCreateDocumentsService {
         return scoringDataDTO;
     }
 
-    public void writeToTextFileCreditApplication(String filename, ScoringDataDTO scoringDataDTO, Application application) {
+    public void writeToTextFileCreditApplication(String filename, ScoringDataDTO scoringDataDTO, Application application) throws IOException {
         try (FileWriter writer = new FileWriter(filename, false)) {
             String text = String.format(
                     """
@@ -91,12 +99,13 @@ public class EmailConsumeCreateDocumentsService {
 
             writer.write(text);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error while file {} write", filename);
+            throw new IOException();
         }
-        LOGGER.info("Write to credit-application.txt successfully!");
+        LOGGER.info("Write to {} successfully!", filename);
     }
 
-    public void writeToTextFileCreditContact(String filename, ScoringDataDTO scoringDataDTO, Application application) {
+    public void writeToTextFileCreditContact(String filename, ScoringDataDTO scoringDataDTO, Application application) throws IOException {
         try (FileWriter writer = new FileWriter(filename, false)) {
 
             String text = String.format(
@@ -122,19 +131,21 @@ public class EmailConsumeCreateDocumentsService {
 
             writer.write(text);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error while file {} write", filename);
+            throw new IOException();
         }
-        LOGGER.info("Write to credit-contact.txt successfully!");
+        LOGGER.info("Write to {} successfully!", filename);
     }
 
-    public void writeToTextFileCreditPaymentSchedule(String filename, Application application) {
+    public void writeToTextFileCreditPaymentSchedule(String filename, Application application) throws IOException {
         try (FileWriter writer = new FileWriter(filename, false)) {
             String text = String.format(application.getCredit().getPayment_schedule().toString());
             writer.write(text);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("Error while file {} write", filename);
+            throw new IOException();
         }
-        LOGGER.info("Write to credit-payment-schedule.txt successfully!");
+        LOGGER.info("Write to {} successfully!", filename);
     }
 
     private void sendToEmail(EmailMessage emailMessage) throws javax.mail.MessagingException {
@@ -147,14 +158,14 @@ public class EmailConsumeCreateDocumentsService {
         helper.setTo(email);
         helper.setSubject(subject);
 
-        FileSystemResource file1 = new FileSystemResource(new File("D:\\programming\\LoanConveyorApp\\credit-application.txt"));
-        helper.addAttachment("credit-application.txt", file1);
+        FileSystemResource creditApplicationFile = new FileSystemResource(new File(filePathToCreditApplication));
+        helper.addAttachment("credit-application.txt", creditApplicationFile);
 
-        FileSystemResource file2 = new FileSystemResource(new File("D:\\programming\\LoanConveyorApp\\credit-contact.txt"));
-        helper.addAttachment("credit-contact.txt", file2);
+        FileSystemResource creditContactFile = new FileSystemResource(new File(filePathToCreditContact));
+        helper.addAttachment("credit-contact.txt", creditContactFile);
 
-        FileSystemResource file3 = new FileSystemResource(new File("D:\\programming\\LoanConveyorApp\\credit-payment-schedule.txt"));
-        helper.addAttachment("credit-payment-schedule.txt", file3);
+        FileSystemResource creditPaymentScheduleFile = new FileSystemResource(new File(filePathToCreditPaymentSchedule));
+        helper.addAttachment("credit-payment-schedule.txt", creditPaymentScheduleFile);
 
         String text = String.format("Hello, here it your loan documents for application Nº %d!\n" +
                         "Now you should send singing documents request by the following this link: http://localhost:8080/swagger-ui/index.html#/SingDocuments/singDocuments",
@@ -165,6 +176,7 @@ public class EmailConsumeCreateDocumentsService {
             emailService.getJavaMailSender().send(message);
         } catch (MessagingException e) {
             LOGGER.error("Error while sending email: {} subject: {}", e.getMessage(), subject);
+            throw new javax.mail.MessagingException();
         }
         LOGGER.info("Email message sent to {} subject: {}", email, subject);
     }

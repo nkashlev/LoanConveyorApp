@@ -33,3 +33,9 @@ spring:
                     starttls:
                         enable: true
         username: loanconveyor2@gmail.com
+
+    config:
+        additional-location:
+                    credit-application: file:/D:\\programming\\LoanConveyorApp\\credit-application.txt
+                    credit-contact: file:/D:\\programming\\LoanConveyorApp\\credit-contact.txt
+                    credit-payment-schedule: file:/D:\programming\LoanConveyorApp\credit-payment-schedule.txt
