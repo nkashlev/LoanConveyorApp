@@ -45,7 +45,7 @@ public class ApplicationUtil {
         applicationRepository.save(application);
     }
 
-    public Application findApplicationById(Long id) throws ResourceNotFoundException {
+    public Application  findApplicationById(Long id) throws ResourceNotFoundException {
         LOGGER.info("Started to find application with id: {}", id);
         Application application = applicationRepository.findById(id).orElse(null);
         if (application == null) {

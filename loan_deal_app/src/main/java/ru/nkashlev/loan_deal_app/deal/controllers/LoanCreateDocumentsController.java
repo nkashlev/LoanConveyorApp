@@ -10,7 +10,7 @@ import ru.nkashlev.loan_deal_app.deal.service.CreateDocumentsProducerService;
 
 @RestController
 @RequiredArgsConstructor
-public class LoanCreateDocuments implements CreateDocumentsApi {
+public class LoanCreateDocumentsController implements CreateDocumentsApi {
 
     private final CreateDocumentsProducerService createDocumentsProducerService;
     @SneakyThrows
