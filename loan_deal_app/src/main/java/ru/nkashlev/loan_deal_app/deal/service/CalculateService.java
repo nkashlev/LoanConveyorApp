@@ -3,21 +3,25 @@ package ru.nkashlev.loan_deal_app.deal.service;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.nkashlev.loan_deal_app.deal.entity.Application;
+import ru.nkashlev.loan_deal_app.deal.entity.Client;
 import ru.nkashlev.loan_deal_app.deal.entity.Credit;
 import ru.nkashlev.loan_deal_app.deal.entity.util.CreditStatus;
+import ru.nkashlev.loan_deal_app.deal.entity.util.EmailMessage;
+import ru.nkashlev.loan_deal_app.deal.entity.util.Passport;
 import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.CreditDTO;
 import ru.nkashlev.loan_deal_app.deal.model.FinishRegistrationRequestDTO;
 import ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO;
-import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
+import ru.nkashlev.loan_deal_app.deal.repositories.ClientRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.CreditRepository;
-import ru.nkashlev.loan_deal_app.deal.utils.FindIdByApplication;
-import ru.nkashlev.loan_deal_app.deal.utils.UpdateApplicationStatusHistory;
+import ru.nkashlev.loan_deal_app.deal.utils.ApplicationUtil;
 
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum.AUTOMATIC;
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.APPROVED;
+import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.CC_APPROVED;
 import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.GenderEnum.*;
 import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.MaritalStatusEnum.*;
 
@@ -26,21 +30,31 @@ import static ru.nkashlev.loan_deal_app.deal.model.ScoringDataDTO.MaritalStatusE
 @RequiredArgsConstructor
 public class CalculateService {
 
-    private final ApplicationRepository applicationRepository;
-
     private final ConveyorCalculationClient conveyorCalculationClient;
 
     private final CreditRepository creditRepository;
 
+    private final ClientRepository clientRepository;
+
+    private final KafkaProducer kafkaProducer;
+
+    private final ApplicationUtil applicationUtil;
+
+    @Value("${spring.kafka.producer.create-documents}")
+    private String topic;
+
     private final Logger LOGGER = LoggerFactory.getLogger(CalculateService.class);
 
-
     public void finishRegistration(Long id, FinishRegistrationRequestDTO request) throws ResourceNotFoundException {
-        Application application = new FindIdByApplication(applicationRepository).findIdByApplication(id);
+        Application application = applicationUtil.findApplicationById(id);
         ScoringDataDTO scoringDataDTO = setScoringDTO(new ScoringDataDTO(), application, request);
         Credit credit = saveCredit(application, scoringDataDTO);
-        new UpdateApplicationStatusHistory(applicationRepository).updateApplicationStatusHistory(application, APPROVED, AUTOMATIC, credit);
+        updateClient(application, scoringDataDTO);
+        applicationUtil.updateApplicationStatusHistory(application, CC_APPROVED, AUTOMATIC, credit);
         LOGGER.info("Registration finished for application with ID {}: {}", id, request);
+        EmailMessage message = new EmailMessage(application.getClient().getEmail(), application.getApplicationId(), APPROVED);
+        kafkaProducer.sendMessage(topic, message);
+        LOGGER.info("Message sent to kafka with topic - conveyor-create-documents");
     }
 
     private Credit saveCredit(Application application, ScoringDataDTO scoringDataDTO) {
@@ -81,6 +95,24 @@ public class CalculateService {
         LOGGER.info("ScoringDataDTO saved");
         return scoringDataDTO;
     }
+
+    private void updateClient(Application application, ScoringDataDTO scoringDataDTO) {
+        Client client = application.getClient();
+        client.setAccount(scoringDataDTO.getAccount());
+        client.setGender(scoringDataDTO.getGender());
+        client.setMarital_status(scoringDataDTO.getMaritalStatus());
+        client.setDependent_amount(scoringDataDTO.getDependentAmount());
+        Passport passport = new Passport();
+        passport.setNumber(scoringDataDTO.getPassportNumber());
+        passport.setSeries(scoringDataDTO.getPassportSeries());
+        passport.setIssue_branch(scoringDataDTO.getPassportIssueBranch());
+        passport.setIssue_date(scoringDataDTO.getPassportIssueDate());
+        client.setPassport(passport);
+        client.setEmployment(scoringDataDTO.getEmployment());
+        clientRepository.save(client);
+        LOGGER.info("Client updated");
+    }
+
 
     private void setGender(FinishRegistrationRequestDTO request, ScoringDataDTO scoringDataDTO) {
         switch (request.getGender()) {

@@ -9,7 +9,7 @@ paths:
   /deal/application:
     post:
       tags:
-        - Application
+        - CreateApplication
       operationId: LoanApplication
       description: Расчёт возможных условий кредита
       requestBody:
@@ -31,7 +31,7 @@ paths:
   /deal/offer:
     put:
       tags:
-        - Offer
+        - ApplyOffer
       operationId: LoanOffer
       description: Выбор одного из предложений
       requestBody:
@@ -43,8 +43,12 @@ paths:
       responses:
         200:
           description: success
+
   /deal/calculate/{application_id}:
     put:
+      tags:
+        - CalculateDocuments
+      operationId: dealCalculateApplicationIdPut
       summary: Завершение регистрации и подсчёт кредита
       description: Метод для завершения регистрации и получения полной информации о кредите
       parameters:
@@ -65,6 +69,73 @@ paths:
       responses:
         '200':
           description: Успешное завершение регистрации и подсчёт кредита
+
+  /deal/document/{applicationId}/send:
+    post:
+      tags:
+        - CreateDocuments
+      description: Create documents
+      operationId: CreateDocuments
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Document sent successfully
+
+  /deal/document/{applicationId}/sign:
+    post:
+      tags:
+        - SingDocuments
+      description: Sing documents
+      operationId: SingDocuments
+      parameters:
+      - name: applicationId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Sing successfully
+
+  /deal/document/{applicationId}/code:
+    post:
+      tags:
+        - SendSesCode
+      description: Send SES Code
+      operationId: SendSesCode
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        description: Четырехзначный код для проверки
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: integer
+                  format: int64
+                  maximum: 9999
+                  minimum: 1000
+              required:
+                - code
+      responses:
+        '200':
+          description: Send SES Code successfully
+
 components:
   schemas:
     LoanApplicationRequestDTO:
@@ -159,7 +230,7 @@ components:
           description: Общая сумма кредита
         term:
           type: integer
-          format: int64
+          format: int32
           example: 12
           minimum: 6
           description: Срок кредита в месяцах
@@ -238,7 +309,7 @@ components:
           description: Семейное положение заемщика
         dependentAmount:
           type: integer
-          format: int64
+          format: int32
           example: 2
           description: Количество иждивенцев у заемщика
         passportIssueDate:
@@ -328,7 +399,7 @@ components:
           description: Запрошенная сумма кредита
         term:
           type: integer
-          format: int64
+          format: int32
           example: 12
           minimum: 6
           description: Срок кредита в месяцах
@@ -383,7 +454,7 @@ components:
           description: Семейное положение заемщика
         dependentAmount:
           type: integer
-          format: int64
+          format: int32
           example: 2
           description: Количество иждивенцев у заемщика
         employment:
@@ -470,5 +541,3 @@ components:
         remainingDebt:
           type: number
           description: Оставшаяся задолженность по кредиту после платежа
-
-

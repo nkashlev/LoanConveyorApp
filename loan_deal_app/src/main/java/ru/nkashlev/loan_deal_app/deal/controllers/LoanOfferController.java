@@ -5,13 +5,13 @@ import lombok.SneakyThrows;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import ru.nkashlev.loan_deal_app.deal.api.OfferApi;
+import ru.nkashlev.loan_deal_app.deal.api.ApplyOfferApi;
 import ru.nkashlev.loan_deal_app.deal.model.LoanOfferDTO;
 import ru.nkashlev.loan_deal_app.deal.service.OfferService;
 
 @RestController
 @RequiredArgsConstructor
-public class LoanOfferController implements OfferApi {
+public class LoanOfferController implements ApplyOfferApi {
     private final OfferService offerService;
 
     @SneakyThrows

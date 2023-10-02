@@ -12,7 +12,10 @@ import ru.nkashlev.loan_deal_app.deal.model.LoanOfferDTO;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
 import ru.nkashlev.loan_deal_app.deal.repositories.ClientRepository;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.PREAPPROVAL;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +29,7 @@ public class LoanService {
     public List<LoanOfferDTO> createApplication(LoanApplicationRequestDTO request) {
         List<LoanOfferDTO> offers = conveyorOfferClient.calculateLoanOffers(request);
         saveApplication(offers, saveClient(request));
+
         LOGGER.info("New loan application created for client with email: {}", request.getEmail());
         return offers;
     }
@@ -50,6 +54,8 @@ public class LoanService {
         for (LoanOfferDTO loanOffer : offers) {
             Application application = new Application();
             application.setClient(client);
+            application.setCreationDate(LocalDate.now());
+            application.setStatus(PREAPPROVAL);
             applicationRepository.save(application);
             loanOffer.setApplicationId(application.getApplicationId());
             LOGGER.info("New application saved with ID: {}", application.getApplicationId());

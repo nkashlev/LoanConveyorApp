@@ -22,7 +22,7 @@ public class FindIdByApplicationTest {
     private ApplicationRepository applicationRepository;
 
     @InjectMocks
-    private FindIdByApplication findIdByApplication;
+    private ApplicationUtil findIdByApplication;
 
     @Test
     public void testFindIdByApplication() throws ResourceNotFoundException {
@@ -32,7 +32,7 @@ public class FindIdByApplicationTest {
 
         when(applicationRepository.findById(id)).thenReturn(Optional.of(application));
 
-        Application result = findIdByApplication.findIdByApplication(id);
+        Application result = findIdByApplication.findApplicationById(id);
 
         verify(applicationRepository, times(1)).findById(id);
         assertEquals(application, result);
@@ -44,8 +44,6 @@ public class FindIdByApplicationTest {
 
         when(applicationRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(ResourceNotFoundException.class, () -> {
-            findIdByApplication.findIdByApplication(id);
-        });
+        assertThrows(ResourceNotFoundException.class, () -> findIdByApplication.findApplicationById(id));
     }
 }
