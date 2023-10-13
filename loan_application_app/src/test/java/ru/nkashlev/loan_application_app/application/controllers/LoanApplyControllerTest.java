@@ -40,7 +40,7 @@ public class LoanApplyControllerTest {
 
     @Test
     void loanOfferApply_ValidRequest_ReturnsOkResponse() {
-        ResponseEntity<Void> response = loanApplyController.loanOfferApply(request);
+        ResponseEntity<Void> response = loanApplyController.loanOffer(request);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         verify(applyOfferService).applyOffer(any());

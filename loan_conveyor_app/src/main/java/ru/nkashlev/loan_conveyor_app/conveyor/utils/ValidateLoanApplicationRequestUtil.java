@@ -35,7 +35,7 @@ public class ValidateLoanApplicationRequestUtil {
 //        if (!request.getEmail().matches("[\\w.]{2,50}@[\\w.]{2,20}")) {
 //            invalidFields.add("email");
 //        }
-        // TODO: 12.09.2023  
+        // TODO: 12.09.2023
         if (!request.getBirthdate().isBefore(LocalDate.now().minusYears(18))) {
             invalidFields.add("birthdate");
         }

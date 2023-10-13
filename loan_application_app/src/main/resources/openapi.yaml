@@ -9,9 +9,9 @@ paths:
   /application:
     post:
       tags:
-        - LoanOffer
-      operationId: preScoringLoanOffers
-      description: Создать заявку
+        - CreateApplication
+      operationId: LoanApplication
+      description: Расчёт возможных условий кредита
       requestBody:
         required: true
         content:
@@ -27,11 +27,12 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/LoanOfferDTO"
+
   /application/offer:
     put:
       tags:
         - ApplyOffer
-      operationId: LoanOfferApply
+      operationId: LoanOffer
       description: Выбор одного из предложений
       requestBody:
         required: true
@@ -42,7 +43,6 @@ paths:
       responses:
         200:
           description: success
-
 components:
   schemas:
     LoanApplicationRequestDTO:
