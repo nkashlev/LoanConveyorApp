@@ -41,7 +41,7 @@ public class EmailConsumerSendCodeService {
         String subject = "Your simple electric sing";
 
         String text = "Hello, here your simple electric sing code " + code + " for loan application № " + applicationId + ".\n"
-                + "Now should send this code to: http://localhost:8080/swagger-ui/index.html#/SendSesCode/sendSesCode";
+                + "Now should send this code to: http://localhost:9090/swagger-ui/index.html#/SendSesCode/sendSesCode";
 
         try {
             emailService.sendEmail(email, subject, text);

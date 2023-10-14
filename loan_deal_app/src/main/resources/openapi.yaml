@@ -94,12 +94,12 @@ paths:
       description: Sing documents
       operationId: SingDocuments
       parameters:
-      - name: applicationId
-        in: path
-        required: true
-        schema:
-          type: integer
-          format: int64
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: Sing successfully
@@ -135,7 +135,41 @@ paths:
       responses:
         '200':
           description: Send SES Code successfully
-
+  /deal/admin/application/{applicationId}:
+    get:
+      tags:
+        - getApplicationById
+      description: get application
+      operationId: Get
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: get application successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanApplicationRequestDTO"
+  /deal/admin/application:
+    get:
+      tags:
+        - getAllApplications
+      description: get all applications
+      operationId: GetAll
+      responses:
+        200:
+          description: get applications successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanApplicationRequestDTO"
 components:
   schemas:
     LoanApplicationRequestDTO:
@@ -159,7 +193,7 @@ components:
           description: Запрашиваемая сумма
         term:
           type: integer
-          format: int64
+          format: int32
           example: 12
           minimum: 6
           description: Срок кредита в месяцах

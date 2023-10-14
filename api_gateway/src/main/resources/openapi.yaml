@@ -6,6 +6,43 @@ tags:
   - name: gateway
     description: gateway
 paths:
+  /api/deal/admin/application/{applicationId}:
+    get:
+      tags:
+        - getApplicationById
+      description: get application by id
+      operationId: Get
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        200:
+          description: get application successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoanApplicationRequestDTO"
+
+  /api/deal/admin/application:
+    get:
+      tags:
+        - getAllApplications
+      description: get all applications
+      operationId: GetAll
+      responses:
+        200:
+          description: get applications successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LoanApplicationRequestDTO"
+
   /api/conveyor/offers:
     post:
       tags:
@@ -47,44 +84,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CreditDTO"
-
-#  /api/deal/application:
-#    post:
-#      tags:
-#        - CreateApplication
-#      operationId: LoanApplication
-#      description: Расчёт возможных условий кредита
-#      requestBody:
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: "#/components/schemas/LoanApplicationRequestDTO"
-#      responses:
-#        200:
-#          description: success
-#          content:
-#            application/json:
-#              schema:
-#                type: array
-#                items:
-#                  $ref: "#/components/schemas/LoanOfferDTO"
-#
-#  /api/deal/offer:
-#    put:
-#      tags:
-#        - ApplyOffer
-#      operationId: LoanOffer
-#      description: Выбор одного из предложений
-#      requestBody:
-#        required: true
-#        content:
-#          application/json:
-#            schema:
-#              $ref: "#/components/schemas/LoanOfferDTO"
-#      responses:
-#        200:
-#          description: success
 
   /api/deal/calculate/{application_id}:
     put:

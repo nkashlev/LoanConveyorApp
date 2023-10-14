@@ -8,9 +8,12 @@ import ru.nkashlev.loan_deal_app.deal.entity.Application;
 import ru.nkashlev.loan_deal_app.deal.entity.Credit;
 import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
 import ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO;
+import ru.nkashlev.loan_deal_app.deal.model.LoanApplicationRequestDTO;
 import ru.nkashlev.loan_deal_app.deal.repositories.ApplicationRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.ChangeTypeEnum;
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum;
@@ -45,13 +48,55 @@ public class ApplicationUtil {
         applicationRepository.save(application);
     }
 
-    public Application  findApplicationById(Long id) throws ResourceNotFoundException {
+    public Application findApplicationById(Long id) throws ResourceNotFoundException {
         LOGGER.info("Started to find application with id: {}", id);
         Application application = applicationRepository.findById(id).orElse(null);
         if (application == null) {
+            LOGGER.info("Cannot find application with id: {}", id);
             throw new ResourceNotFoundException("Cannot find application with id: " + id);
         }
         LOGGER.info("Found application with id: {}", id);
         return application;
+    }
+
+    public LoanApplicationRequestDTO getApplication(Long id) throws ResourceNotFoundException {
+        Application application = applicationRepository.findByIdNotNull(id);
+        if (application == null) {
+            LOGGER.info("Cannot find application with id: {}", id);
+            throw new ResourceNotFoundException("Cannot find application with id: " + id);
+        }
+        LOGGER.info("Application returned with id: {}", id);
+        return new LoanApplicationRequestDTO().firstName(application.getClient().getFirst_name())
+                .middleName(application.getClient().getMiddle_name())
+                .lastName(application.getClient().getLast_name())
+                .amount(application.getCredit().getAmount())
+                .term(application.getCredit().getTerm())
+                .email(application.getClient().getEmail())
+                .birthdate(application.getClient().getBirth_date())
+                .passportSeries(application.getClient().getPassport().getSeries())
+                .passportNumber(application.getClient().getPassport().getNumber());
+
+    }
+
+    public List<LoanApplicationRequestDTO> getAll() throws ResourceNotFoundException {
+        Iterable<Application> iterable = applicationRepository.findAllNotNullElements();
+        if (iterable == null) {
+            LOGGER.info("Cannot find applications");
+            throw new ResourceNotFoundException("Cannot find applications");
+        }
+        ArrayList<LoanApplicationRequestDTO> applications = new ArrayList<>();
+        for (Application application : iterable) {
+            applications.add(new LoanApplicationRequestDTO().firstName(application.getClient().getFirst_name())
+                    .middleName(application.getClient().getMiddle_name())
+                    .lastName(application.getClient().getLast_name())
+                    .amount(application.getCredit().getAmount())
+                    .term(application.getCredit().getTerm())
+                    .email(application.getClient().getEmail())
+                    .birthdate(application.getClient().getBirth_date())
+                    .passportSeries(application.getClient().getPassport().getSeries())
+                    .passportNumber(application.getClient().getPassport().getNumber()));
+        }
+        LOGGER.info("Applications returned: {}", applications);
+        return applications;
     }
 }
