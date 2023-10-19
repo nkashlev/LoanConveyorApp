@@ -4,15 +4,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.nkashlev.api_gateway.gateway.api.CreateDocumentsApi;
-import ru.nkashlev.api_gateway.gateway.service.DealFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.LoanDealCreateDocumentsService;
 
 @RequiredArgsConstructor
 @RestController
 public class LoanDealCreateDocumentsController implements CreateDocumentsApi {
 
-    private final DealFeignClient dealFeignClient;
+    private final LoanDealCreateDocumentsService dealCreateDocumentsService;
     @Override
     public ResponseEntity<Void> createDocuments(Long applicationId) {
-        return dealFeignClient.createDocuments(applicationId);
+        return dealCreateDocumentsService.createDocuments(applicationId);
     }
 }

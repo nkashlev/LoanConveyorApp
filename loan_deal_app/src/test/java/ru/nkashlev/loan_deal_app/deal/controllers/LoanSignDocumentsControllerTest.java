@@ -7,25 +7,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import ru.nkashlev.loan_deal_app.deal.exceptions.ResourceNotFoundException;
-import ru.nkashlev.loan_deal_app.deal.service.SingDocumentsProducerService;
+import ru.nkashlev.loan_deal_app.deal.service.SignDocumentsProducerService;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @SpringBootTest
-class LoanSingDocumentsControllerTest {
+class LoanSignDocumentsControllerTest {
     @Mock
-    private SingDocumentsProducerService singDocumentsProducerService;
+    private SignDocumentsProducerService signDocumentsProducerService;
     @InjectMocks
-    private LoanSingDocumentsController loanSingDocumentsController;
+    private LoanSignDocumentsController loanSignDocumentsController;
 
     @Test
     void singDocuments() throws ResourceNotFoundException {
         Long applicationId = 1L;
-        ResponseEntity<Void> response = loanSingDocumentsController.singDocuments(applicationId);
+        ResponseEntity<Void> response = loanSignDocumentsController.signDocuments(applicationId);
         assert  response.getStatusCode() == HttpStatus.OK;
-        verify(singDocumentsProducerService).sendMessageToKafka(applicationId);
-        verify(singDocumentsProducerService, times(1)).sendMessageToKafka(anyLong());
+        verify(signDocumentsProducerService).sendMessageToKafka(applicationId);
+        verify(signDocumentsProducerService, times(1)).sendMessageToKafka(anyLong());
     }
 }

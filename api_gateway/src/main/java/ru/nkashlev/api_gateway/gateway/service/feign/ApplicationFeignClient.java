@@ -1,4 +1,4 @@
-package ru.nkashlev.api_gateway.gateway.service;
+package ru.nkashlev.api_gateway.gateway.service.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;

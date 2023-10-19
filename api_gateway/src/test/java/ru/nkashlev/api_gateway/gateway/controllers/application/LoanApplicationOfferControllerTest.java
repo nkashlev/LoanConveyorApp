@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 
-import ru.nkashlev.api_gateway.gateway.service.ApplicationFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.feign.ApplicationFeignClient;
 import ru.nkashlev.api_gateway.model.LoanOfferDTO;
 
 @RunWith(MockitoJUnitRunner.class)

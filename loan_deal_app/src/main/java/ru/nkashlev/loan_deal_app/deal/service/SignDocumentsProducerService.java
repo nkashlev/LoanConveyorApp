@@ -19,15 +19,15 @@ import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.S
 
 
 @Service
-public class SingDocumentsProducerService extends AbstractProducerService {
+public class SignDocumentsProducerService extends AbstractProducerService {
     private final String topic;
-    private final Logger LOGGER = LoggerFactory.getLogger(SingDocumentsProducerService.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(SignDocumentsProducerService.class);
     private final static StatusEnum BEFORE_STATUS = PREPARE_DOCUMENTS;
     private final static StatusEnum AFTER_STATUS = DOCUMENT_CREATED;
     private final Random random = new Random();
 
     @Autowired
-    public SingDocumentsProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
+    public SignDocumentsProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
                                         @Value("${spring.kafka.producer.send-ses}") String topic, ApplicationUtil applicationUtil) {
         super(applicationRepository, creditRepository, kafkaProducer, applicationUtil);
         this.topic = topic;
