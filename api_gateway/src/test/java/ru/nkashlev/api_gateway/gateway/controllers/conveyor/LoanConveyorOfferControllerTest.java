@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.nkashlev.api_gateway.gateway.service.feign.ConveyorFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.LoanConveyorOfferService;
 import ru.nkashlev.api_gateway.model.LoanApplicationRequestDTO;
 import ru.nkashlev.api_gateway.model.LoanOfferDTO;
 
@@ -23,7 +23,7 @@ public class LoanConveyorOfferControllerTest {
     private LoanConveyorOfferController loanConveyorOfferController;
 
     @Mock
-    private ConveyorFeignClient conveyorFeignClient;
+    private LoanConveyorOfferService conveyorOfferService;
 
     @Test
     public void scoringLoanOffers_ShouldReturnSuccessResponse() {
@@ -31,13 +31,13 @@ public class LoanConveyorOfferControllerTest {
 
         List<LoanOfferDTO> expectedResponse = new ArrayList<>();
 
-        Mockito.when(conveyorFeignClient.scoringLoanOffers(Mockito.any(LoanApplicationRequestDTO.class)))
+        Mockito.when(conveyorOfferService.scoringLoanOffers(Mockito.any(LoanApplicationRequestDTO.class)))
                 .thenReturn(ResponseEntity.ok(expectedResponse));
         ResponseEntity<List<LoanOfferDTO>> actualResponse =
                 loanConveyorOfferController.scoringLoanOffers(loanApplicationRequestDTO);
 
         Assert.assertEquals(ResponseEntity.ok(expectedResponse), actualResponse);
-        Mockito.verify(conveyorFeignClient, Mockito.times(1))
+        Mockito.verify(conveyorOfferService, Mockito.times(1))
                 .scoringLoanOffers(loanApplicationRequestDTO);
     }
 
@@ -47,13 +47,13 @@ public class LoanConveyorOfferControllerTest {
         ResponseEntity<List<LoanOfferDTO>> expectedResponse =
                 ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        Mockito.when(conveyorFeignClient.scoringLoanOffers(Mockito.any(LoanApplicationRequestDTO.class)))
+        Mockito.when(conveyorOfferService.scoringLoanOffers(Mockito.any(LoanApplicationRequestDTO.class)))
                 .thenReturn(expectedResponse);
         ResponseEntity<List<LoanOfferDTO>> actualResponse =
                 loanConveyorOfferController.scoringLoanOffers(loanApplicationRequestDTO);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(conveyorFeignClient, Mockito.times(1))
+        Mockito.verify(conveyorOfferService, Mockito.times(1))
                 .scoringLoanOffers(loanApplicationRequestDTO);
     }
 }

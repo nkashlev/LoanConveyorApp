@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.nkashlev.api_gateway.gateway.service.feign.DealFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.LoanDealCalculateService;
 import ru.nkashlev.api_gateway.model.FinishRegistrationRequestDTO;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -19,7 +19,7 @@ public class LoanDealCalculateControllerTest {
     private LoanDealCalculateController loanDealCalculateController;
 
     @Mock
-    private DealFeignClient dealFeignClient;
+    private LoanDealCalculateService dealCalculateService;
 
     @Test
     public void dealCalculateApplicationIdPut_ShouldReturnSuccessResponse() {
@@ -27,13 +27,13 @@ public class LoanDealCalculateControllerTest {
         FinishRegistrationRequestDTO finishRegistrationRequestDTO = new FinishRegistrationRequestDTO();
         ResponseEntity<Void> expectedResponse = ResponseEntity.ok().build();
 
-        Mockito.when(dealFeignClient.dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO))
+        Mockito.when(dealCalculateService.dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO))
                 .thenReturn(expectedResponse);
         ResponseEntity<Void> actualResponse =
                 loanDealCalculateController.dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(dealFeignClient, Mockito.times(1))
+        Mockito.verify(dealCalculateService, Mockito.times(1))
                 .dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO);
     }
 
@@ -44,13 +44,13 @@ public class LoanDealCalculateControllerTest {
         FinishRegistrationRequestDTO finishRegistrationRequestDTO = new FinishRegistrationRequestDTO();
         ResponseEntity<Void> expectedResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        Mockito.when(dealFeignClient.dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO))
+        Mockito.when(dealCalculateService.dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO))
                 .thenReturn(expectedResponse);
         ResponseEntity<Void> actualResponse =
                 loanDealCalculateController.dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(dealFeignClient, Mockito.times(1))
+        Mockito.verify(dealCalculateService, Mockito.times(1))
                 .dealCalculateApplicationIdPut(applicationId, finishRegistrationRequestDTO);
     }
 }

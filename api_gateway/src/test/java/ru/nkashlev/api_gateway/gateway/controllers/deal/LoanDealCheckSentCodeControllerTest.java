@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.nkashlev.api_gateway.gateway.service.feign.DealFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.LoanDealCheckSentCodeService;
 import ru.nkashlev.api_gateway.model.SendSesCodeRequest;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -19,7 +19,7 @@ public class LoanDealCheckSentCodeControllerTest {
     private LoanDealCheckSentCodeController loanDealCheckSentCodeController;
 
     @Mock
-    private DealFeignClient dealFeignClient;
+    private LoanDealCheckSentCodeService dealCheckSentCodeService;
 
     @Test
     public void sendSesCode_ShouldReturnSuccessResponse() {
@@ -28,13 +28,13 @@ public class LoanDealCheckSentCodeControllerTest {
         SendSesCodeRequest sendSesCodeRequest = new SendSesCodeRequest();
         ResponseEntity<Void> expectedResponse = ResponseEntity.ok().build();
 
-        Mockito.when(dealFeignClient.sendSesCode(applicationId, sendSesCodeRequest))
+        Mockito.when(dealCheckSentCodeService.sendSesCode(applicationId, sendSesCodeRequest))
                 .thenReturn(expectedResponse);
         ResponseEntity<Void> actualResponse =
                 loanDealCheckSentCodeController.sendSesCode(applicationId, sendSesCodeRequest);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(dealFeignClient, Mockito.times(1))
+        Mockito.verify(dealCheckSentCodeService, Mockito.times(1))
                 .sendSesCode(applicationId, sendSesCodeRequest);
     }
 
@@ -45,13 +45,13 @@ public class LoanDealCheckSentCodeControllerTest {
         SendSesCodeRequest sendSesCodeRequest = new SendSesCodeRequest();
         ResponseEntity<Void> expectedResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        Mockito.when(dealFeignClient.sendSesCode(applicationId, sendSesCodeRequest))
+        Mockito.when(dealCheckSentCodeService.sendSesCode(applicationId, sendSesCodeRequest))
                 .thenReturn(expectedResponse);
         ResponseEntity<Void> actualResponse =
                 loanDealCheckSentCodeController.sendSesCode(applicationId, sendSesCodeRequest);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(dealFeignClient, Mockito.times(1))
+        Mockito.verify(dealCheckSentCodeService, Mockito.times(1))
                 .sendSesCode(applicationId, sendSesCodeRequest);
     }
 }
