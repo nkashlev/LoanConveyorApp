@@ -58,7 +58,7 @@ public class LoanOfferControllerTest {
         when(validateRequestService.validateRequest(any())).thenReturn(new ArrayList<>());
         when(offerService.createApplication(any())).thenReturn(loanOffers);
 
-        ResponseEntity<List<LoanOfferDTO>> response = loanOfferController.preScoringLoanOffers(request);
+        ResponseEntity<List<LoanOfferDTO>> response = loanOfferController.loanApplication(request);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(loanOffers, response.getBody());
@@ -72,7 +72,7 @@ public class LoanOfferControllerTest {
         when(validateRequestService.validateRequest(any())).thenReturn(errors);
 
         Assertions.assertThrows(ScoringException.class, () -> {
-            loanOfferController.preScoringLoanOffers(request);
+            loanOfferController.loanApplication(request);
         });
     }
 }

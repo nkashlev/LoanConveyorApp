@@ -27,7 +27,7 @@ public class EmailConsumerService {
     }
     private void sendToEmail(EmailMessage emailMessage) {
         String text = "Hello your loan application № " + emailMessage.getApplicationId() + " passed all checks!\n"
-                + "Now should send creating documents request by following link: http://localhost:8080/swagger-ui/index.html#/CreateDocuments/createDocuments";
+                + "Now should send creating documents request by following link: http://localhost:9090/swagger-ui/index.html#/CreateDocuments/createDocuments";
         String email = emailMessage.getAddress();
         String subject = "Create documents for your loan application";
         try {

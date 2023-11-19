@@ -14,8 +14,8 @@ public class LoanApplyController implements ApplyOfferApi {
     private final ApplyOfferService applyOfferService;
 
     @Override
-    public ResponseEntity<Void> loanOfferApply(@RequestBody LoanOfferDTO request) {
-        applyOfferService.applyOffer(request);
+    public ResponseEntity<Void> loanOffer(@RequestBody LoanOfferDTO loanOfferDTO) {
+        applyOfferService.applyOffer(loanOfferDTO);
         return ResponseEntity.ok().build();
     }
 }

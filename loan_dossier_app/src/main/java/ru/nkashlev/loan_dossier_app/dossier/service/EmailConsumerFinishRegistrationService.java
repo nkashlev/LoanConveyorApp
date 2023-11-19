@@ -44,7 +44,7 @@ public class EmailConsumerFinishRegistrationService {
         String subject = "Finish registration";
 
         String text = String.format("Hello, your loan application Nº %s %s!\n" +
-                        "Now you should finish registration by following this link: http://localhost:8080/swagger-ui/index.html#/CalculateDocuments/dealCalculateApplicationIdPut",
+                        "Now you should finish registration by following this link: http://localhost:9090/swagger-ui/index.html#/CalculateDocuments/dealCalculateApplicationIdPut",
                 applicationId, status);
 
         try {

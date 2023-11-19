@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <parent>
         <groupId>ru.nkashlev</groupId>
         <artifactId>LoanConveyorApp</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>loan_application_app</artifactId>
+    <artifactId>api_gateway</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>loan_application_app</name>
-    <description>loan application project for Spring Boot</description>
+    <name>api_gateway</name>
+    <description>api_gateway project for Spring Boot</description>
 
     <dependencies>
+
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
@@ -22,9 +23,21 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.6.15</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>2.0.4</version>
         </dependency>
 
         <dependency>
@@ -53,12 +66,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok-mapstruct-binding</artifactId>
-            <version>0.2.0</version>
-        </dependency>
-
-        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -79,8 +86,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <modelPackage>ru.nkashlev.loan_application_app.model</modelPackage>
-                            <apiPackage>ru.nkashlev.loan_application_app.application.api</apiPackage>
+                            <modelPackage>ru.nkashlev.api_gateway.model</modelPackage>
+                            <apiPackage>ru.nkashlev.api_gateway.gateway.api</apiPackage>
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>
