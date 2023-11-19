@@ -168,7 +168,7 @@ public class EmailConsumeCreateDocumentsService {
         helper.addAttachment("credit-payment-schedule.txt", creditPaymentScheduleFile);
 
         String text = String.format("Hello, here it your loan documents for application Nº %d!\n" +
-                        "Now you should send singing documents request by the following this link: http://localhost:8080/swagger-ui/index.html#/SingDocuments/singDocuments",
+                        "Now you should send singing documents request by the following this link: http://localhost:9090/swagger-ui/index.html#/SingDocuments/singDocuments",
                 emailMessage.getApplicationId());
         helper.setText(text);
 

@@ -22,7 +22,7 @@ public class CheckSendCodeProducerService extends AbstractProducerService {
     private final String topic;
     private final Logger LOGGER = LoggerFactory.getLogger(CheckSendCodeProducerService.class);
     private final StatusEnum BEFORE_STATUS = DOCUMENT_CREATED;
-    private final static StatusEnum AFTER_STATUS = DOCUMENT_SIGNED;
+    private final static StatusEnum AFTER_STATUS = CREDIT_ISSUED;
     @Autowired
     public CheckSendCodeProducerService(ApplicationRepository applicationRepository, CreditRepository creditRepository, KafkaProducer kafkaProducer,
                                         @Value("${spring.kafka.producer.credit-issued}") String topic, ApplicationUtil applicationUtil) {
