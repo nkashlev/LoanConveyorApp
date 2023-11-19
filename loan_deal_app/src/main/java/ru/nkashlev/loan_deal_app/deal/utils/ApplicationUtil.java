@@ -60,7 +60,7 @@ public class ApplicationUtil {
     }
 
     public LoanApplicationRequestDTO getApplication(Long id) throws ResourceNotFoundException {
-        Application application = applicationRepository.findByIdNotNull(id);
+        Application application = applicationRepository.findByApplicationIdAndCreditIsNotNull(id);
         if (application == null) {
             LOGGER.info("Cannot find application with id: {}", id);
             throw new ResourceNotFoundException("Cannot find application with id: " + id);
@@ -79,7 +79,7 @@ public class ApplicationUtil {
     }
 
     public List<LoanApplicationRequestDTO> getAll() throws ResourceNotFoundException {
-        Iterable<Application> iterable = applicationRepository.findAllNotNullElements();
+        Iterable<Application> iterable = applicationRepository.findAllByCreditIsNotNull();
         if (iterable == null) {
             LOGGER.info("Cannot find applications");
             throw new ResourceNotFoundException("Cannot find applications");

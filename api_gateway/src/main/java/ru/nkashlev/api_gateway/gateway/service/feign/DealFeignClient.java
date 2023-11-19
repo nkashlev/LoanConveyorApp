@@ -1,4 +1,4 @@
-package ru.nkashlev.api_gateway.gateway.service;
+package ru.nkashlev.api_gateway.gateway.service.feign;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ public interface DealFeignClient {
     ResponseEntity<Void> createDocuments(@PathVariable("applicationId") Long applicationId);
 
     @PostMapping("/document/{applicationId}/sign")
-    ResponseEntity<Void> singDocuments(@PathVariable Long applicationId);
+    ResponseEntity<Void> signDocuments(@PathVariable Long applicationId);
 
     @GetMapping("/admin/application/{applicationId}")
     ResponseEntity<LoanApplicationRequestDTO> get(@PathVariable Long applicationId);

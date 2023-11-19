@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.nkashlev.api_gateway.gateway.service.ApplicationFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.LoanCreateApplicationService;
 import ru.nkashlev.api_gateway.model.LoanApplicationRequestDTO;
 import ru.nkashlev.api_gateway.model.LoanOfferDTO;
 
@@ -21,9 +21,8 @@ public class LoanCreateApplicationControllerTest {
 
     @InjectMocks
     private LoanCreateApplicationController loanCreateApplicationController;
-
     @Mock
-    private ApplicationFeignClient applicationFeignClient;
+    private LoanCreateApplicationService createApplicationService;
 
     @Test
     public void loanApplication_ShouldReturnSuccessResponse() {
@@ -32,14 +31,14 @@ public class LoanCreateApplicationControllerTest {
         loanOffers.add(new LoanOfferDTO());
         ResponseEntity<List<LoanOfferDTO>> expectedResponse = ResponseEntity.ok(loanOffers);
 
-        Mockito.when(applicationFeignClient.loanApplication(Mockito.any(LoanApplicationRequestDTO.class)))
+        Mockito.when(createApplicationService.createApplications(Mockito.any(LoanApplicationRequestDTO.class)))
                 .thenReturn(expectedResponse);
         ResponseEntity<List<LoanOfferDTO>> actualResponse =
                 loanCreateApplicationController.loanApplication(requestDTO);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(applicationFeignClient, Mockito.times(1))
-                .loanApplication(requestDTO);
+        Mockito.verify(createApplicationService, Mockito.times(1))
+                .createApplications(requestDTO);
     }
 
     @Test
@@ -49,13 +48,13 @@ public class LoanCreateApplicationControllerTest {
         ResponseEntity<List<LoanOfferDTO>> expectedResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build();
 
-        Mockito.when(applicationFeignClient.loanApplication(Mockito.any(LoanApplicationRequestDTO.class)))
+        Mockito.when(createApplicationService.createApplications(Mockito.any(LoanApplicationRequestDTO.class)))
                 .thenReturn(expectedResponse);
         ResponseEntity<List<LoanOfferDTO>> actualResponse =
                 loanCreateApplicationController.loanApplication(requestDTO);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(applicationFeignClient, Mockito.times(1))
-                .loanApplication(requestDTO);
+        Mockito.verify(createApplicationService, Mockito.times(1))
+                .createApplications(requestDTO);
     }
 }

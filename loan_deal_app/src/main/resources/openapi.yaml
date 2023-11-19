@@ -90,9 +90,9 @@ paths:
   /deal/document/{applicationId}/sign:
     post:
       tags:
-        - SingDocuments
-      description: Sing documents
-      operationId: SingDocuments
+        - SignDocuments
+      description: Sign documents
+      operationId: SignDocuments
       parameters:
         - name: applicationId
           in: path
@@ -102,7 +102,7 @@ paths:
             format: int64
       responses:
         '200':
-          description: Sing successfully
+          description: Sign successfully
 
   /deal/document/{applicationId}/code:
     post:

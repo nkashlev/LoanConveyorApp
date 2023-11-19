@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import ru.nkashlev.api_gateway.gateway.service.DealFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.LoanDealCreateDocumentsService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoanDealCreateDocumentsControllerTest {
@@ -18,20 +18,20 @@ public class LoanDealCreateDocumentsControllerTest {
     private LoanDealCreateDocumentsController loanDealCreateDocumentsController;
 
     @Mock
-    private DealFeignClient dealFeignClient;
+    private LoanDealCreateDocumentsService dealCreateDocumentsService;
 
     @Test
     public void createDocuments_ShouldReturnSuccessResponse() {
         Long applicationId = 1L;
         ResponseEntity<Void> expectedResponse = ResponseEntity.ok().build();
 
-        Mockito.when(dealFeignClient.createDocuments(applicationId))
+        Mockito.when(dealCreateDocumentsService.createDocuments(applicationId))
                 .thenReturn(expectedResponse);
         ResponseEntity<Void> actualResponse =
                 loanDealCreateDocumentsController.createDocuments(applicationId);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(dealFeignClient, Mockito.times(1))
+        Mockito.verify(dealCreateDocumentsService, Mockito.times(1))
                 .createDocuments(applicationId);
     }
 
@@ -40,12 +40,12 @@ public class LoanDealCreateDocumentsControllerTest {
         Long applicationId = 1L;
         ResponseEntity<Void> expectedResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 
-        Mockito.when(dealFeignClient.createDocuments(applicationId))
+        Mockito.when(dealCreateDocumentsService.createDocuments(applicationId))
                 .thenReturn(expectedResponse);
         ResponseEntity<Void> actualResponse =
                 loanDealCreateDocumentsController.createDocuments(applicationId);
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(dealFeignClient, Mockito.times(1))
+        Mockito.verify(dealCreateDocumentsService, Mockito.times(1))
                 .createDocuments(applicationId);
     }
 }

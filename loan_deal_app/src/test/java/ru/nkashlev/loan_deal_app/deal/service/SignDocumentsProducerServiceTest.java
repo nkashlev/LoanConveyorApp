@@ -18,7 +18,7 @@ import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.S
 import static ru.nkashlev.loan_deal_app.deal.model.ApplicationStatusHistoryDTO.StatusEnum.PREPARE_DOCUMENTS;
 
 @SpringBootTest
-class SingDocumentsProducerServiceTest {
+class SignDocumentsProducerServiceTest {
 
     @Mock
     private ApplicationRepository applicationRepository;
@@ -27,25 +27,25 @@ class SingDocumentsProducerServiceTest {
     private ApplicationUtil applicationUtil;
 
     @InjectMocks
-    private SingDocumentsProducerService singDocumentsProducerService;
+    private SignDocumentsProducerService signDocumentsProducerService;
 
     @Test
     public void testUpdateApplication() {
         Application application = new Application();
-        singDocumentsProducerService.updateApplication(application, 1L);
+        signDocumentsProducerService.updateApplication(application, 1L);
         verify(applicationUtil, times(1)).updateApplicationStatusHistory(application, DOCUMENT_CREATED, AUTOMATIC);
         verify(applicationRepository, times(1)).save(any(Application.class));
     }
 
     @Test
     public void testGetBeforeStatus() {
-        StatusEnum beforeStatus = singDocumentsProducerService.getBeforeStatus();
+        StatusEnum beforeStatus = signDocumentsProducerService.getBeforeStatus();
         assertEquals(PREPARE_DOCUMENTS, beforeStatus);
     }
 
     @Test
     public void testGetAfterStatus() {
-        StatusEnum afterStatus = singDocumentsProducerService.getAfterStatus();
+        StatusEnum afterStatus = signDocumentsProducerService.getAfterStatus();
         assertEquals(DOCUMENT_CREATED, afterStatus);
     }
 }

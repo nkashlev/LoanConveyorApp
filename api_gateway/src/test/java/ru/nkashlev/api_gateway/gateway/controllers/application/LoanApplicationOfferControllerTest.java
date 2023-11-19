@@ -8,14 +8,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
-
-import ru.nkashlev.api_gateway.gateway.service.ApplicationFeignClient;
+import ru.nkashlev.api_gateway.gateway.service.LoanApplicationOfferService;
 import ru.nkashlev.api_gateway.model.LoanOfferDTO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LoanApplicationOfferControllerTest {
+
     @Mock
-    private ApplicationFeignClient applicationFeignClient;
+    private LoanApplicationOfferService offerService;
 
     @InjectMocks
     private LoanApplicationOfferController loanApplicationOfferController;
@@ -24,13 +24,14 @@ public class LoanApplicationOfferControllerTest {
         LoanOfferDTO loanOfferDTO = new LoanOfferDTO();
         ResponseEntity<Void> expectedResponse = ResponseEntity.ok().build();
 
-        Mockito.when(applicationFeignClient.loanOffer(Mockito.any(LoanOfferDTO.class)))
+        Mockito.when(offerService.applyOffer(Mockito.any(LoanOfferDTO.class)))
                 .thenReturn(expectedResponse);
+
         ResponseEntity<Void> actualResponse = loanApplicationOfferController.loanOffer(loanOfferDTO);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(applicationFeignClient, Mockito.times(1))
-                .loanOffer(loanOfferDTO);
+        Mockito.verify(offerService, Mockito.times(1))
+                .applyOffer(loanOfferDTO);
     }
 
     @Test
@@ -39,12 +40,12 @@ public class LoanApplicationOfferControllerTest {
         LoanOfferDTO loanOfferDTO = new LoanOfferDTO();
         ResponseEntity<Void> expectedResponse = ResponseEntity.badRequest().build();
 
-        Mockito.when(applicationFeignClient.loanOffer(Mockito.any(LoanOfferDTO.class)))
+        Mockito.when(offerService.applyOffer(Mockito.any(LoanOfferDTO.class)))
                 .thenReturn(expectedResponse);
         ResponseEntity<Void> actualResponse = loanApplicationOfferController.loanOffer(loanOfferDTO);
 
         Assert.assertEquals(expectedResponse, actualResponse);
-        Mockito.verify(applicationFeignClient, Mockito.times(1))
-                .loanOffer(loanOfferDTO);
+        Mockito.verify(offerService, Mockito.times(1))
+                .applyOffer(loanOfferDTO);
     }
 }

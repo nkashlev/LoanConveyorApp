@@ -38,9 +38,9 @@ public class EmailConsumerSendCodeService {
         Long code = application.getSesCode();
         String email = emailMessage.getAddress();
         Long applicationId = emailMessage.getApplicationId();
-        String subject = "Your simple electric sing";
+        String subject = "Your simple electric sign";
 
-        String text = "Hello, here your simple electric sing code " + code + " for loan application № " + applicationId + ".\n"
+        String text = "Hello, here your simple electric sign code " + code + " for loan application № " + applicationId + ".\n"
                 + "Now should send this code to: http://localhost:9090/swagger-ui/index.html#/SendSesCode/sendSesCode";
 
         try {
