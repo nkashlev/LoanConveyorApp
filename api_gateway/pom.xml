@@ -16,18 +16,17 @@
 
     <dependencies>
 
-<<<<<<< HEAD
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.cloud</groupId>-->
 <!--            <artifactId>spring-cloud-starter-gateway</artifactId>-->
 <!--        </dependency>-->
-=======
+
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>2.2.15</version>
         </dependency>
->>>>>>> origin/master
+
 
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -36,15 +35,14 @@
         </dependency>
 
         <dependency>
-<<<<<<< HEAD
+
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
             <version>2.2.15</version>
         </dependency>
 
         <dependency>
-=======
->>>>>>> origin/master
+
             <groupId>org.openapitools</groupId>
             <artifactId>jackson-databind-nullable</artifactId>
             <version>0.2.6</version>
@@ -57,15 +55,14 @@
         </dependency>
 
         <dependency>
-<<<<<<< HEAD
+
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
             <version>3.1.5</version>
         </dependency>
 
         <dependency>
-=======
->>>>>>> origin/master
+
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
@@ -91,7 +88,7 @@
         </dependency>
 
         <dependency>
-<<<<<<< HEAD
+
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.2.18</version>
@@ -126,16 +123,12 @@
         </dependency>
 
         <dependency>
-=======
->>>>>>> origin/master
+
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
     </dependencies>
 
     <build>
@@ -152,13 +145,13 @@
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
                             <generatorName>spring</generatorName>
-<<<<<<< HEAD
+
                             <modelPackage>ru.nkashlev.loan_deal_app.deal.model</modelPackage>
                             <apiPackage>ru.nkashlev.loan_deal_app.deal.api</apiPackage>
-=======
+
                             <modelPackage>ru.nkashlev.api_gateway.model</modelPackage>
                             <apiPackage>ru.nkashlev.api_gateway.gateway.api</apiPackage>
->>>>>>> origin/master
+
                             <configOptions>
                                 <sourceFolder>src/gen/java/main</sourceFolder>
                                 <interfaceOnly>true</interfaceOnly>
@@ -194,14 +187,13 @@
                     </excludes>
                 </configuration>
             </plugin>
-<<<<<<< HEAD
+
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
                 <version>3.6.3</version>
             </plugin>
-=======
->>>>>>> origin/master
+
         </plugins>
     </build>
 
